@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class counter : MonoBehaviour
 {
+    public static int score = 0;
+    
     // Start is called before the first frame update
     void Start()
     {
@@ -13,6 +15,7 @@ public class counter : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        scoreText.text = "counter: " + score.ToString();
+
     }
 }
