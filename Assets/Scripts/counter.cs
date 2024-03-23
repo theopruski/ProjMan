@@ -15,7 +15,8 @@ public class counter : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        /*
         scoreText.text = "counter: " + score.ToString();
-
+        */
     }
 }
