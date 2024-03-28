@@ -63,7 +63,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: aad3f23b59ea9fa4292e7e20e5ffafff, type: 2}
+  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -99,9 +99,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rotationSpeed: 50
   coinPrefab: {fileID: 0}
-  CoinNumber: 200
+  CoinNumber: 10
   spawnArea: {x: 10, y: 0, z: 10}
-  collisionRadius: 0.5
 --- !u!135 &8731351093091540702
 SphereCollider:
   m_ObjectHideFlags: 0
