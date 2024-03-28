@@ -3,44 +3,36 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using UnityEngine;
 using TMPro;
+using System;
 
 public class coins : MonoBehaviour
 {
     public float rotationSpeed = 50f;
-
-    private int coinCount = 0;
-
-    private static TMPro.TextMeshProUGUI counterText;
-
+    
+    //public GameObject coinPrefab; // Le préfab de la pièce à faire spawner
+    public int CoinNumber = 10; // Le nombre de pièces à faire spawner
+    public Vector3 spawnArea = new Vector3(10, 0, 10); // La zone dans laquelle les pièces seront spawnées
+    
     // Start is called before the first frame update
     void Start()
     {
-        GameObject counterObject = GameObject.Find("Counter");
-        if (counterObject != null)
+        
+        // Faire spawner des pièces aléatoirement dans la zone spécifiée
+        for (int i = 0; i < CoinNumber; i++)
         {
-            // Récupérer le composant TextMeshProUGUI
-            counterText = counterObject.GetComponent<TMPro.TextMeshProUGUI>();
+            Vector3 spawnPosition = new Vector3(
+                UnityEngine.Random.Range(-spawnArea.x, spawnArea.x),
+                0,
+                UnityEngine.Random.Range(-spawnArea.z, spawnArea.z)
+            );
+            //Instantiate(coinPrefab, spawnPosition, Quaternion.identity);
         }
-
+ 
     }
 
     // Update is called once per frame
     void Update()
     {
         transform.Rotate(Vector3.up, rotationSpeed * Time.deltaTime);
-    }
-
-    private void OnTriggerEnter(Collider other)
-    {
-        if (other.CompareTag("Player"))
-        {
-            coinCount++;
-
-            // Mettre à jour le texte du compteur avec le nouveau nombre de pièces collectées
-            counterText.text = "Counter: " + coinCount.ToString();
-
-            // Si l'objet entre en collision avec une voiture, le faire disparaître
-            Destroy(gameObject);
-        }
     }
 }
