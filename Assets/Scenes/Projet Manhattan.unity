@@ -769,11 +769,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5ff28cadfe8b23f478fab0b05b76a7b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  timeLimit: 60
   counterText: {fileID: 664267107}
   timerText: {fileID: 1617095246}
   gameOverText: {fileID: 1040947369}
-  timeLimit: 60
   winText: {fileID: 331632977}
+  music: {fileID: 757083356}
 --- !u!1 &664267105
 GameObject:
   m_ObjectHideFlags: 0
@@ -976,6 +977,11 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!82 &757083356 stripped
+AudioSource:
+  m_CorrespondingSourceObject: {fileID: 3749771765486798926, guid: accffc9d2c20b69469bc2f05e5dd7cc7, type: 3}
+  m_PrefabInstance: {fileID: 1043289352}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1040947367
 GameObject:
   m_ObjectHideFlags: 0
