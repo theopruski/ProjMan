@@ -7,7 +7,6 @@ using System;
 
 public class coins : MonoBehaviour
 {
-    public float rotationSpeed = 50f;
     
     public GameObject coinPrefab; // Le préfab de la pièce à faire spawner
     public int CoinNumber; // Le nombre de pièces à faire spawner
@@ -51,6 +50,5 @@ public class coins : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        transform.Rotate(Vector3.up, rotationSpeed * Time.deltaTime);
     }
 }
