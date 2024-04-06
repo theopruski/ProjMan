@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657874, g: 0.49641258, b: 0.5748172, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657826, g: 0.49641263, b: 0.57481676, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1378,8 +1378,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 923871288}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: 0.8550389, z: -0, w: -0.5185639}
-  m_LocalPosition: {x: -0.25601578, y: 1.4241638, z: 2.9834204}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.37, y: 3.026, z: 2.46}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1407,17 +1407,21 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 923871289}
     m_Modifications:
+    - target: {fileID: 1878005650694396248, guid: 42dab6c095e3d264caa8fe5c928f74e3, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 8d50b1723117b0b46ad7d3bea6a93cbb, type: 2}
     - target: {fileID: 2101664039434545980, guid: 42dab6c095e3d264caa8fe5c928f74e3, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -2.684021
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 2101664039434545980, guid: 42dab6c095e3d264caa8fe5c928f74e3, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 2.2688293
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2101664039434545980, guid: 42dab6c095e3d264caa8fe5c928f74e3, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.3017578
+      value: 1.87
       objectReference: {fileID: 0}
     - target: {fileID: 2101664039434545980, guid: 42dab6c095e3d264caa8fe5c928f74e3, type: 3}
       propertyPath: m_LocalRotation.w
@@ -1471,6 +1475,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.y
       value: -90
       objectReference: {fileID: 0}
+    - target: {fileID: 4006568957240566571, guid: 42dab6c095e3d264caa8fe5c928f74e3, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 8d50b1723117b0b46ad7d3bea6a93cbb, type: 2}
+    - target: {fileID: 8617353462667170169, guid: 42dab6c095e3d264caa8fe5c928f74e3, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 8d50b1723117b0b46ad7d3bea6a93cbb, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -2018,8 +2030,8 @@ GameObject:
   - component: {fileID: 1248320395}
   - component: {fileID: 1248320397}
   - component: {fileID: 1248320396}
-  m_Layer: 0
-  m_Name: CameraArrows
+  m_Layer: 5
+  m_Name: CameraArrow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2047,7 +2059,7 @@ AudioListener:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1248320394}
-  m_Enabled: 1
+  m_Enabled: 0
 --- !u!20 &1248320397
 Camera:
   m_ObjectHideFlags: 0
@@ -2084,7 +2096,7 @@ Camera:
   field of view: 60
   orthographic: 0
   orthographic size: 5
-  m_Depth: 0
+  m_Depth: 1
   m_CullingMask:
     serializedVersion: 2
     m_Bits: 32
