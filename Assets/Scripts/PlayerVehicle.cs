@@ -24,7 +24,12 @@ public class PlayerVehicle : MonoBehaviour
     public TextMeshProUGUI gameOverText; // texte affichant le message de défaite
     public TextMeshProUGUI winText; // texte affichant le message de victoire
     public AudioSource music; // source audio de la musique
-    private bool hasGameStarted = false; // Vérifie si le jeu a commencé ou non
+    private bool hasGameStarted = false; // vérifie si le jeu a commencé ou non
+    public TextMeshProUGUI LeaderboardText; // texte affichant le message du leaderboard
+    public TextMeshProUGUI endGameCountText; // texte affichant le compteur pour le leaderboard
+    public TextMeshProUGUI endGameTimerText; // texte affichant le timer pour le leaderboard
+    public int coinsLostOnCollision = 50; // nombre de pièce perdu a la collision avec les AIVehicle
+
 
     void Start()
     {
@@ -39,6 +44,10 @@ public class PlayerVehicle : MonoBehaviour
         // ajout des écouteurs d'événements aux boutons
         startButton.onClick.AddListener(StartGame);
         restartButton.onClick.AddListener(RestartGame);
+
+        LeaderboardText.gameObject.SetActive(false); // désactiver le texte du leaderboard
+        endGameCountText.gameObject.SetActive(false); // désactiver le texte du compteur pour le leaderboard
+        endGameTimerText.gameObject.SetActive(false); // désactiver le texte du timer pour le leaderboard
     }
 
     void Update()
@@ -86,10 +95,23 @@ public class PlayerVehicle : MonoBehaviour
         }
     }
 
+    private void OnCollisionEnter(Collision collision)
+    {
+        // vérifie si le joueur a percuté une voiture AI
+        if (collision.gameObject.CompareTag("AIVehicle"))
+        {
+            // faire perdre des points
+            coinCount -= coinsLostOnCollision;
+            // mise à jour du texte du compteur
+            SetCountText();
+        }
+    }
+
+
     void SetCountText()
     {
         // mettre à jour le texte du compteur avec le nouveau nombre de pièces collectées
-        counterText.text = "Count: " + coinCount.ToString();
+        counterText.text = "Count: " + Mathf.Max(coinCount, -1000).ToString();
     }
 
     void GameOver()
@@ -101,6 +123,11 @@ public class PlayerVehicle : MonoBehaviour
         music.Stop();
         // active le menu de fin
         endMenu.SetActive(true);
+        LeaderboardText.gameObject.SetActive(true); // activer le texte du leaderboard
+        endGameCountText.gameObject.SetActive(true); // activer le texte du compteur pour le leaderboard
+        endGameTimerText.gameObject.SetActive(true); // activer le texte du timer pour le leaderboard
+        endGameCountText.text = "Count: " + coinCount.ToString(); // affichage du nombre de point
+        endGameTimerText.text = "Timer: DNF"; // affichage du temps écoulé : "Did Not Finish" pour la defaite 
     }
 
     void Win()
@@ -112,6 +139,11 @@ public class PlayerVehicle : MonoBehaviour
         music.Stop();
         // active le menu de fin
         endMenu.SetActive(true);
+        endGameCountText.gameObject.SetActive(true); // activer le texte du leaderboard
+        endGameTimerText.gameObject.SetActive(true); // activer le texte du compteur pour le leaderboard
+        LeaderboardText.gameObject.SetActive(true); // activer le texte du timer pour le leaderboard
+        endGameCountText.text = "Count: " + coinCount.ToString(); // affichage du nombre de point
+        endGameTimerText.text = "Timer: " + Mathf.CeilToInt(timeLimit - timer).ToString(); // affichage du temps écoulé
     }
 
     public void StartGame()
