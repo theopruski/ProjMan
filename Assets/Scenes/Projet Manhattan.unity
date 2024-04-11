@@ -2907,6 +2907,7 @@ MonoBehaviour:
     m_NumColorKeys: 2
     m_NumAlphaKeys: 2
   globalLight: {fileID: 1627429864}
+  directionalLight: {fileID: 1627429864}
 --- !u!1 &1567683476
 GameObject:
   m_ObjectHideFlags: 0

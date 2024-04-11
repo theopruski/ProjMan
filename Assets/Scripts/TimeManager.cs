@@ -17,13 +17,14 @@ public class TimeManager : MonoBehaviour
     [SerializeField] private Gradient graddientSunsetToNight;
 
     [SerializeField] private Light globalLight;
+    [SerializeField] private Light directionalLight;
 
     private int minutes;
 
     public int Minutes
     { get { return minutes; } set { minutes = value; OnMinutesChange(value); } }
 
-    private int hours = 8;
+    private int hours = 2;
 
     public int Hours
     { get { return hours; } set { hours = value; OnHoursChange(value); } }
@@ -39,6 +40,7 @@ public class TimeManager : MonoBehaviour
             Minutes += 1;
             tempSecond = 0;
         }
+
     }
 
     private void OnMinutesChange(int value)
@@ -57,29 +59,46 @@ public class TimeManager : MonoBehaviour
 
     private void OnHoursChange(int value)
     {
+        if (value == 24) { value = 0; }
+        float lightIntensity = 0;
+        Gradient lightGradient = null;
+        Material skyboxA = null;
+        Material skyboxB = null;
+        float lerpTime = 1;
+
         if (value == 6)
         {
-            StartCoroutine(LerpSkybox(skyboxNight, skyboxSunrise, 1));
-            StartCoroutine(LerpLight(graddientNightToSunrise, 1));
+            lightIntensity = 0.5f;
+            lightGradient = graddientNightToSunrise;
+            skyboxA = skyboxNight;
+            skyboxB = skyboxSunrise;
         }
         else if (value == 10)
         {
-            StartCoroutine(LerpSkybox(skyboxSunrise, skyboxDay, 1));
-            StartCoroutine(LerpLight(graddientSunriseToDay, 1));
+            lightIntensity = 1;
+            lightGradient = graddientSunriseToDay;
+            skyboxA = skyboxSunrise;
+            skyboxB = skyboxDay;
         }
         else if (value == 18)
         {
-            StartCoroutine(LerpSkybox(skyboxDay, skyboxSunset, 1));
-            StartCoroutine(LerpLight(graddientDayToSunset, 1));
+            lightIntensity = 0.5f;
+            lightGradient = graddientDayToSunset;
+            skyboxA = skyboxDay;
+            skyboxB = skyboxSunset;
         }
         else if (value == 22)
         {
-            StartCoroutine(LerpSkybox(skyboxSunset, skyboxNight, 1));
-            StartCoroutine(LerpLight(graddientSunsetToNight, 1));
+            lightIntensity = 0.001f;
+            lightGradient = graddientSunsetToNight;
+            skyboxA = skyboxSunset;
+            skyboxB = skyboxNight;
         }
-        else if (value == 24)
+
+        if (skyboxA != null && skyboxB != null && lightGradient != null)
         {
-            value = 0;
+            StartCoroutine(LerpSkybox(skyboxA, skyboxB, lerpTime));
+            StartCoroutine(LerpLight(lightGradient, directionalLight.intensity, lightIntensity, lerpTime));
         }
     }
 
@@ -94,13 +113,17 @@ public class TimeManager : MonoBehaviour
         RenderSettings.skybox = b;
     }
 
-    private IEnumerator LerpLight(Gradient lightGradient, float time)
+    private IEnumerator LerpLight(Gradient lightGradient, float intensityStart, float intensityEnd, float time)
     {
+        float intensityLerp = 0;
         for (float i = 0; i < time; i += Time.deltaTime)
         {
             globalLight.color = lightGradient.Evaluate(i / time);
+            intensityLerp = Mathf.Lerp(intensityStart, intensityEnd, i / time);
+            directionalLight.intensity = intensityLerp;
             RenderSettings.fogColor = globalLight.color;
             yield return null;
         }
+        directionalLight.intensity = intensityEnd;
     }
 }
