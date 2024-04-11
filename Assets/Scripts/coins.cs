@@ -12,6 +12,7 @@ public class coins : MonoBehaviour
     public int CoinNumber; // Le nombre de pièces à faire spawner
     public Vector3 spawnArea = new Vector3(1000, 0, 1000); // La zone dans laquelle les pièces seront spawnées
     public float collisionRadius = 100f; // rayon de collision
+    public float distanceFromGround = 5f;
 
 
     // Start is called before the first frame update
@@ -26,9 +27,10 @@ public class coins : MonoBehaviour
             while (!validPosition) {
                 spawnPosition = new Vector3(
                 UnityEngine.Random.Range(-450, -850),
-                256,
+                0,
                 UnityEngine.Random.Range(2550, 2950)
                 );
+
 
                 Collider[] hitColliders = Physics.OverlapSphere(spawnPosition, collisionRadius);
                 validPosition = true;
@@ -41,7 +43,23 @@ public class coins : MonoBehaviour
                         break;
                     }
                 }
+
+                RaycastHit hitInfo;
+                if (Physics.Raycast(spawnPosition + Vector3.up * 1000f, Vector3.down, out hitInfo, 2000f))
+                {
+                    if (hitInfo.collider.gameObject.name.StartsWith("building"))
+                    {
+                        validPosition = false;
+                    }
+                }
             }
+
+            RaycastHit hit; // Conservez cette variable pour l'utiliser dans cette portée
+            if (Physics.Raycast(spawnPosition + Vector3.up * 1000f, Vector3.down, out hit, 2000f))
+            {
+                spawnPosition.y = hit.point.y + distanceFromGround;
+            }
+
             Instantiate(coinPrefab, spawnPosition, Quaternion.identity);
         }
  
