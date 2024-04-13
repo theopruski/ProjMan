@@ -21,7 +21,7 @@ public class TimeManager : MonoBehaviour
     public int Minutes
     { get { return minutes; } set { minutes = value; OnMinutesChange(value); } }
 
-    private int hours = 11;
+    private int hours = 10;
 
     public int Hours
     { get { return hours; } set { hours = value; OnHoursChange(value); } }
@@ -29,7 +29,9 @@ public class TimeManager : MonoBehaviour
     private float tempSecond;
 
     public Light directionalLight;
-    public float dayLength = 1440f; // Durée d'une journée en secondes
+    public float dayLength; // Durée d'une journée en secondes
+
+    private int lastHourUpdated = -1;
 
     public void Update()
     {
@@ -42,7 +44,7 @@ public class TimeManager : MonoBehaviour
         }
 
         float time = Time.time / dayLength; // Temps normalisé entre 0 et 1
-        float angle = time * 180f; // Convertir en angle de rotation
+        float angle = time * 360f; // Convertir en angle de rotation
 
         directionalLight.transform.rotation = Quaternion.Euler(50 + angle, -30, 0);
 
@@ -64,9 +66,10 @@ public class TimeManager : MonoBehaviour
     private void OnHoursChange(int value)
     {
         if (value == 24) { value = 0; }
-        float lightIntensity = 0;
+        if (value != lastHourUpdated) { 
+            float lightIntensity = 0;
         Gradient lightGradient = null;
-        Material skyboxA = null;
+        Material skyboxA = RenderSettings.skybox;
         Material skyboxB = null;
         float lerpTime = 1;
 
@@ -113,6 +116,7 @@ public class TimeManager : MonoBehaviour
         }
 
         directionalLight.intensity = lightIntensity;
+        }
     }
 
     private IEnumerator LerpSkybox(Material a, Material b, float time)
