@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class AIVehicleBus : MonoBehaviour
+public class VehicleBusAI : MonoBehaviour
 {
     public float speed = 15.0f; // vitesse de déplacement du véhicule
     public UnityEvent OnVehicleDestroyed;  // événement Unity déclenché lorsque le véhicule est détruit
