@@ -16,20 +16,20 @@ public class TimeManager : MonoBehaviour
     [SerializeField] private Gradient graddientDayToSunset;
     [SerializeField] private Gradient graddientSunsetToNight;
 
-    [SerializeField] private Light globalLight;
-    [SerializeField] private Light directionalLight;
-
     private int minutes;
 
     public int Minutes
     { get { return minutes; } set { minutes = value; OnMinutesChange(value); } }
 
-    private int hours = 2;
+    private int hours = 11;
 
     public int Hours
     { get { return hours; } set { hours = value; OnHoursChange(value); } }
 
     private float tempSecond;
+
+    public Light directionalLight;
+    public float dayLength = 1440f; // Durée d'une journée en secondes
 
     public void Update()
     {
@@ -41,11 +41,15 @@ public class TimeManager : MonoBehaviour
             tempSecond = 0;
         }
 
+        float time = Time.time / dayLength; // Temps normalisé entre 0 et 1
+        float angle = time * 180f; // Convertir en angle de rotation
+
+        directionalLight.transform.rotation = Quaternion.Euler(50 + angle, -30, 0);
+
     }
 
     private void OnMinutesChange(int value)
     {
-        globalLight.transform.Rotate(Vector3.up, (1f / (1440f / 4f)) * 360f, Space.World);
         if (value >= 60)
         {
             Hours++;
@@ -66,6 +70,8 @@ public class TimeManager : MonoBehaviour
         Material skyboxB = null;
         float lerpTime = 1;
 
+        UnityEngine.Debug.Log("Heure actuelle : " + value);
+
         if (value == 6)
         {
             lightIntensity = 0.5f;
@@ -75,7 +81,7 @@ public class TimeManager : MonoBehaviour
         }
         else if (value == 10)
         {
-            lightIntensity = 1;
+            lightIntensity = 0.8f;
             lightGradient = graddientSunriseToDay;
             skyboxA = skyboxSunrise;
             skyboxB = skyboxDay;
@@ -94,12 +100,19 @@ public class TimeManager : MonoBehaviour
             skyboxA = skyboxSunset;
             skyboxB = skyboxNight;
         }
+        else
+        {
+            // Maintain current light intensity
+            lightIntensity = directionalLight.intensity;
+        }
 
         if (skyboxA != null && skyboxB != null && lightGradient != null)
         {
             StartCoroutine(LerpSkybox(skyboxA, skyboxB, lerpTime));
             StartCoroutine(LerpLight(lightGradient, directionalLight.intensity, lightIntensity, lerpTime));
         }
+
+        directionalLight.intensity = lightIntensity;
     }
 
     private IEnumerator LerpSkybox(Material a, Material b, float time)
@@ -118,10 +131,10 @@ public class TimeManager : MonoBehaviour
         float intensityLerp = 0;
         for (float i = 0; i < time; i += Time.deltaTime)
         {
-            globalLight.color = lightGradient.Evaluate(i / time);
+            directionalLight.color = lightGradient.Evaluate(i / time);
             intensityLerp = Mathf.Lerp(intensityStart, intensityEnd, i / time);
             directionalLight.intensity = intensityLerp;
-            RenderSettings.fogColor = globalLight.color;
+            RenderSettings.fogColor = directionalLight.color;
             yield return null;
         }
         directionalLight.intensity = intensityEnd;
