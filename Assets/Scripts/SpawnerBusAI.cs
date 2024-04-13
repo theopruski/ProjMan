@@ -30,7 +30,7 @@ public class SpawnerBusAI : MonoBehaviour
         Vector3 spawnPosition = new Vector3(-338.4f, 253.97f, 2447.9f);  // définir la position du véhicule
         Quaternion spawnRotation = Quaternion.Euler(0f, 28.011f, 0f); // définir la rotation du véhicule
         GameObject spawnedVehicle = Instantiate(vehiculePrefab, spawnPosition, spawnRotation); // instancier le préfab du véhicule à la position et la rotation spécifiées
-        VehicleBusAI vehicleMovement = spawnedVehicle.GetComponent<VehicleBusAI>(); // récupérer le composant du véhicule
+        VehicleBusAI vehicleMovement = spawnedVehicle.GetComponent<VehicleBusAI>(); // récupérer le composant du bus
         if (vehicleMovement != null)
         {
             // Ajouter un listener à l'événement OnVehicleDestroyed pour activer le prochain spawn lorsque le véhicule est détruit
