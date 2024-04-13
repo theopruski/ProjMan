@@ -4,6 +4,8 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using TMPro;
 using UnityEngine.UI;
+using System.Linq;
+using UnityEngine.SocialPlatforms.Impl;
 
 public class PlayerVehicle : MonoBehaviour
 {
@@ -28,9 +30,11 @@ public class PlayerVehicle : MonoBehaviour
     public TextMeshProUGUI LeaderboardText; // texte affichant le message du leaderboard
     public TextMeshProUGUI endGameCountText; // texte affichant le compteur pour le leaderboard
     public TextMeshProUGUI endGameTimerText; // texte affichant le timer pour le leaderboard
-    public int coinsLostOnCollision = 50; // nombre de pièce perdu a la collision avec les AIVehicle
-
-
+    public int coinsLostOnCollisionCar = 50; // nombre de pièce perdu a la collision avec les AIVehicle
+    public int coinsLostOnCollisionBus = 75; // nombre de pièce perdu a la collision avec les BusAI
+    public List<(int count, float timer)> highScores = new List<(int, float)>();
+    public TextMeshProUGUI LeaderboardTab; // texte affichant le timer pour le leaderboard
+    public GameObject[] coins; // tableau pour stocker toutes les pièces
     void Start()
     {
         GameObject counterObject = GameObject.Find("Counter"); // trouver l'objet de compteur dans la scène
@@ -48,6 +52,8 @@ public class PlayerVehicle : MonoBehaviour
         LeaderboardText.gameObject.SetActive(false); // désactiver le texte du leaderboard
         endGameCountText.gameObject.SetActive(false); // désactiver le texte du compteur pour le leaderboard
         endGameTimerText.gameObject.SetActive(false); // désactiver le texte du timer pour le leaderboard
+        LeaderboardTab.enabled = false; // désactiver le tableau des scores
+        ShowHighScores(); // affichage du tableau des scores
     }
 
     void Update()
@@ -101,7 +107,14 @@ public class PlayerVehicle : MonoBehaviour
         if (collision.gameObject.CompareTag("AIVehicle"))
         {
             // faire perdre des points
-            coinCount -= coinsLostOnCollision;
+            coinCount -= coinsLostOnCollisionCar;
+            // mise à jour du texte du compteur
+            SetCountText();
+        }
+        else if (collision.gameObject.CompareTag("BusAI"))
+        {
+            // faire perdre des points
+            coinCount -= coinsLostOnCollisionBus;
             // mise à jour du texte du compteur
             SetCountText();
         }
@@ -123,6 +136,9 @@ public class PlayerVehicle : MonoBehaviour
         music.Stop();
         // active le menu de fin
         endMenu.SetActive(true);
+        LeaderboardTab.enabled = true; // activer le tableau des scores
+        highScores.Add((coinCount, float.NegativeInfinity)); // ajoute le score actuel du joueur
+        ShowHighScores(); // affichage du tableau des scores
         LeaderboardText.gameObject.SetActive(true); // activer le texte du leaderboard
         endGameCountText.gameObject.SetActive(true); // activer le texte du compteur pour le leaderboard
         endGameTimerText.gameObject.SetActive(true); // activer le texte du timer pour le leaderboard
@@ -139,6 +155,9 @@ public class PlayerVehicle : MonoBehaviour
         music.Stop();
         // active le menu de fin
         endMenu.SetActive(true);
+        LeaderboardTab.enabled = true; // activer le tableau des score
+        highScores.Add((coinCount, timeLimit - timer)); // ajoute le score actuel du joueur
+        ShowHighScores(); // affichage du tableau des scores
         endGameCountText.gameObject.SetActive(true); // activer le texte du leaderboard
         endGameTimerText.gameObject.SetActive(true); // activer le texte du compteur pour le leaderboard
         LeaderboardText.gameObject.SetActive(true); // activer le texte du timer pour le leaderboard
@@ -182,6 +201,34 @@ public class PlayerVehicle : MonoBehaviour
         music.Play(); // réactiver le son
         Time.timeScale = 1; // réinitialise le temps
         gameOver = false; // réinitialise gameOver
+        // réactiver toutes les pièces
+        foreach (GameObject coin in coins)
+        {
+            coin.SetActive(true);
+        }
 
+    }
+
+    // affiche les 5 meilleurs scores triés par score et temps
+    void ShowHighScores()
+    {
+        var sortedScores = highScores.OrderByDescending(score => score.count) // tri en fonction du nombre de pièces
+                                     .ThenBy(score => score.timer == float.NegativeInfinity ? float.PositiveInfinity : score.timer) // tri en fonction du temps (les scores DNF sont mis en dernier)
+                                     .ThenByDescending(score => score.count < 0 ? score.count : 0) // tri en fonction des scores négatifs
+                                     .ThenBy(score => score.timer == float.NegativeInfinity ? float.PositiveInfinity : score.timer) // tri en fonction du temps pour les scores négatifs
+                                     .Take(5); // prend les 5 premiers scores
+
+        // crée une chaîne de caractères pour afficher les scores
+        string highScoreText = "High Scores:\n";
+        // parcourir les scores triés
+        for (int i = 0; i < sortedScores.Count(); i++)
+        {
+            // formater le temps en chaîne de caractères (afficher "DNF" pour les scores DNF)
+            string timerText = (sortedScores.ElementAt(i).timer == float.NegativeInfinity) ? "DNF" : sortedScores.ElementAt(i).timer.ToString("F2");
+            // ajoute le score à la chaîne de caractères
+            highScoreText += string.Format("{0}. Count: {1}, Timer: {2}\n", i + 1, sortedScores.ElementAt(i).count, timerText);
+        }
+        // affiche les scores dans l'onglet Leaderboard
+        LeaderboardTab.text = highScoreText;
     }
 }

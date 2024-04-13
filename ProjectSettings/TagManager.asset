@@ -9,6 +9,7 @@ TagManager:
   - StartMenu
   - EndMenu
   - AIVehicle
+  - BusAI
   layers:
   - Default
   - TransparentFX

@@ -12,7 +12,7 @@ public class coins : MonoBehaviour
     public int CoinNumber; // Le nombre de pièces à faire spawner
     public Vector3 spawnArea = new Vector3(1000, 0, 1000); // La zone dans laquelle les pièces seront spawnées
     public float collisionRadius = 100f; // rayon de collision
-    public float distanceFromGround = 5f;
+    public float distanceFromGround = 2f;
 
 
     // Start is called before the first frame update
