@@ -193,7 +193,7 @@ public class PlayerVehicle : MonoBehaviour
         gameObject.SetActive(true); // active le joueur
         endMenu.SetActive(false); // désactive le menu de fin
         // réinitialise la position du joueur
-        transform.position = new Vector3(-694.6f, 254.75f, 2756f);
+        transform.position = new Vector3(-791.7f, 254.04f, 2810.54f);
         transform.rotation = Quaternion.Euler(0f, -242.472f, 0f);
         // réinitialise la vitesse et la rotation du véhicule
         speed = 10.0f;
