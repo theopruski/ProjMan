@@ -35,6 +35,8 @@ public class PlayerVehicle : MonoBehaviour
     public List<(int count, float timer)> highScores = new List<(int, float)>();
     public TextMeshProUGUI LeaderboardTab; // texte affichant le timer pour le leaderboard
     public GameObject[] coins; // tableau pour stocker toutes les pièces
+    private WeatherController weatherController; // Référence au script weatherController
+    public float rainSpeed = 5.0f; // Vitesse réduite sous la pluie
     void Start()
     {
         GameObject counterObject = GameObject.Find("Counter"); // trouver l'objet de compteur dans la scène
@@ -54,12 +56,24 @@ public class PlayerVehicle : MonoBehaviour
         endGameTimerText.gameObject.SetActive(false); // désactiver le texte du timer pour le leaderboard
         LeaderboardTab.enabled = false; // désactiver le tableau des scores
         ShowHighScores(); // affichage du tableau des scores
+        weatherController = FindObjectOfType<WeatherController>();
     }
 
     void Update()
     {
         if (hasGameStarted && !gameOver)
         {
+            // Ajuster la vitesse en fonction de la pluie
+            if (weatherController != null && weatherController.IsRaining)
+            {
+                speed = rainSpeed; // Réduire la vitesse si la pluie est active
+                turnSpeed = 15.0f; // Réduire également la vitesse de rotation
+            }
+            else
+            {
+                speed = 10.0f; // Remettre la vitesse normale sinon
+                turnSpeed = 25.0f; // Remettre la rotation normale
+            }
             // récupérer les inputs du joueur
             horizontalInput = Input.GetAxis("Horizontal");
             forwardInput = Input.GetAxis("Vertical");
