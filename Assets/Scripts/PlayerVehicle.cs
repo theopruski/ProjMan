@@ -19,7 +19,7 @@ public class PlayerVehicle : MonoBehaviour
     private float forwardInput; // input vertical du joueur
     private int coinCount; // nombre de pièces collectée
     public float timeLimit = 60f; // limite de temps en secondes
-    private float timer; // compteur de temps
+    public float timer; // compteur de temps
     private bool gameOver; // indicateur si le jeu est terminé
     public TextMeshProUGUI counterText; // texte affichant le nombre de pièces collectées
     public TextMeshProUGUI timerText; // texte affichant le compteur de temps
@@ -84,16 +84,34 @@ public class PlayerVehicle : MonoBehaviour
 
             // mettre à jour le compteur de temps
             timer -= Time.deltaTime;
-            timerText.text = "Timer: " + Mathf.CeilToInt(timer);
+            //timerText.text = "Timer: " + Mathf.CeilToInt(timer);
+            // mettre à jour le texte du compteur et de sa couleur
+            if (timer >= 0)
+            {
+                if (timer <= 10)
+                {
+                    timerText.color = new Color(1.0f, 0.8f, 0.2f); // couleur orange
+                }
+                else
+                {
+                    timerText.color = Color.green; // couleur verte
+                }
+                timerText.text = "Timer: " + Mathf.CeilToInt(timer);
+            }
+            else
+            {
+                timerText.color = Color.red; // couleur rouge
+                timerText.text = "Timer: -" + Mathf.Abs(Mathf.CeilToInt(timer));
+            }
 
             // vérifier si le temps est écoulé
-            if (timer <= 0)
-            {
-                GameOver();
-                gameOver = true;
-                Time.timeScale = 0;
-                gameOverText.gameObject.SetActive(true);
-            }
+            //if (timer <= 0)
+            //{
+            //    GameOver();
+            //    gameOver = true;
+            //    Time.timeScale = 0;
+            //    gameOverText.gameObject.SetActive(true);
+            //}
         }
     }
 

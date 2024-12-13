@@ -10,6 +10,8 @@ TagManager:
   - EndMenu
   - AIVehicle
   - BusAI
+  - Road
+  - Building
   layers:
   - Default
   - TransparentFX
@@ -18,7 +20,7 @@ TagManager:
   - Water
   - UI
   - PostProcess
-  - 
+  - Road
   - 
   - 
   - 
