@@ -23,6 +23,8 @@ public class DeliveryManager : MonoBehaviour
 
     private float minX, maxX, minZ, maxZ; // Limites de la zone valide
 
+    private const int baseSalary = 200; // Salaire de base
+
     void Start()
     {
         // Calcul les limites valides à partir des "borders"
@@ -42,7 +44,12 @@ public class DeliveryManager : MonoBehaviour
             PlayerVehicle playerVehicle = player.GetComponent<PlayerVehicle>();
             if (playerVehicle != null)
             {
+                float remainingTime = playerVehicle.timer;
+                int salary = CalculateSalary(remainingTime);
+                playerVehicle.salary += salary;
+                playerVehicle.SetSalaryText();
                 playerVehicle.timer = 45.0f; // remettre le timer à 45 secondes
+                playerVehicle.lateCounted = false; // Réinitialise l'indicateur de retard compté
             }
 
             SpawnNewDeliveryPoint(); // Créer un nouveau point de livraison
@@ -102,5 +109,22 @@ public class DeliveryManager : MonoBehaviour
     private bool IsInsideBorders(Vector3 position)
     {
         return position.x >= minX && position.x <= maxX && position.z >= minZ && position.z <= maxZ;
+    }
+
+    // Calcule le salaire en fonction du temps restant
+    private int CalculateSalary(float remainingTime)
+    {
+        if (remainingTime >= 10 && remainingTime <= 45)
+        {
+            return 250;
+        }
+        else if (remainingTime >= -10 && remainingTime < 10)
+        {
+            return 200;
+        }
+        else
+        {
+            return 150;
+        }
     }
 }

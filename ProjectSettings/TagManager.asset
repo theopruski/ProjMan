@@ -12,6 +12,7 @@ TagManager:
   - BusAI
   - Road
   - Building
+  - Salary
   layers:
   - Default
   - TransparentFX
