@@ -68,31 +68,26 @@ public class DeliveryManager : MonoBehaviour
     // Fonction pour générer un nouveau point de livraison dans les limites définies et endroit spécifique où le point de livraison doit apparaître
     private void SpawnNewDeliveryPoint()
     {
-        Transform chosenLocation = null;
         Vector3 spawnPosition = Vector3.zero;
         bool validPosition = false;
 
         while (!validPosition)
         {
-            // Choisir un endroit spécifique où le point de livraison doit apparaître
-            int randomIndex = Random.Range(0, deliveryLocations.Length);
-            chosenLocation = deliveryLocations[randomIndex];
-            spawnPosition = chosenLocation.position;
-            // Calculer la position Y en fonction du terrain
-            if (Physics.Raycast(chosenLocation.position + Vector3.up * 500f, Vector3.down, out RaycastHit hitInfo, 1000f))
-            {
-                // Positionner au-dessus du sol
-                spawnPosition.y = hitInfo.point.y + distanceFromGround;
-            }
-            else
-            {
-                Debug.LogWarning($"Impossible de trouver le sol sous {chosenLocation.name}, position par défaut utilisée.");
-            }
+            // Générer une position aléatoire à l'intérieur des limites de bordure
+            float randomX = Random.Range(minX, maxX);
+            float randomZ = Random.Range(minZ, maxZ);
+            spawnPosition = new Vector3(randomX, 0, randomZ);
 
-            // Vérifier si le point est à l'intérieur des limites des "borders"
-            if (IsInsideBorders(spawnPosition))
+            // Calculer la position Y en fonction du terrain
+            if (Physics.Raycast(spawnPosition + Vector3.up * 500f, Vector3.down, out RaycastHit hitInfo, 1000f))
             {
-                validPosition = true;
+                // Vérifier si le point est sur une route
+                if (hitInfo.collider.CompareTag("Road"))
+                {
+                    // Positionner au-dessus du sol
+                    spawnPosition.y = hitInfo.point.y + distanceFromGround;
+                    validPosition = true;
+                }
             }
         }
 
