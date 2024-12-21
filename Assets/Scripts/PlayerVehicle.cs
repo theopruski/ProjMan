@@ -196,7 +196,7 @@ public class PlayerVehicle : MonoBehaviour
         LeaderboardText.gameObject.SetActive(true); // activer le texte du leaderboard
         endGameCountText.gameObject.SetActive(true); // activer le texte du compteur pour le leaderboard
         endGameTimerText.gameObject.SetActive(true); // activer le texte du timer pour le leaderboard
-        endGameCountText.text = "Count: " + salary.ToString(); // affichage du nombre de point
+        endGameCountText.text = "Salary: " + salary.ToString(); // affichage du nombre de point
         endGameTimerText.text = "Timer: " + Mathf.CeilToInt(totalTimePlayed).ToString(); // Affichage du temps passé en jeu
     }
 
@@ -276,7 +276,7 @@ public class PlayerVehicle : MonoBehaviour
                                      .Take(5); // prend les 5 premiers scores
 
         // crée une chaîne de caractères pour afficher les scores
-        string highScoreText = "High Scores:\n";
+        string highScoreText = "High Scores :\n";
         // parcourir les scores triés
         for (int i = 0; i < sortedScores.Count(); i++)
         {
@@ -284,7 +284,7 @@ public class PlayerVehicle : MonoBehaviour
             //string timerText = (sortedScores.ElementAt(i).timer == float.NegativeInfinity) ? "DNF" : sortedScores.ElementAt(i).timer.ToString("F2");
             string timerText = Mathf.CeilToInt(sortedScores.ElementAt(i).timer).ToString();
             // ajoute le score à la chaîne de caractères
-            highScoreText += string.Format("{0}. Count: {1}, Timer: {2}\n", i + 1, sortedScores.ElementAt(i).salary, timerText);
+            highScoreText += string.Format("{0}. Salary : {1}, Timer : {2}\n", i + 1, sortedScores.ElementAt(i).salary, timerText);
         }
         // affiche les scores dans l'onglet Leaderboard
         LeaderboardTab.text = highScoreText;
