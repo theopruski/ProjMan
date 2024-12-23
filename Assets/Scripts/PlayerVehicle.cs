@@ -23,8 +23,8 @@ public class PlayerVehicle : MonoBehaviour
     private bool gameOver; // indicateur si le jeu est terminé
     public TextMeshProUGUI salaryText; // texte affichant l'argent collecté
     public TextMeshProUGUI timerText; // texte affichant le compteur de temps
-    public TextMeshProUGUI gameOverText; // texte affichant le message de défaite
-    public TextMeshProUGUI winText; // texte affichant le message de victoire
+    public TextMeshProUGUI firedGameOverText; // texte affichant le message de défaite pour retards
+    public TextMeshProUGUI dieGameOverText; // texte affichant le message de défaite pour vie à zéro
     public AudioSource music; // source audio de la musique
     private bool hasGameStarted = false; // vérifie si le jeu a commencé ou non
     public TextMeshProUGUI LeaderboardText; // texte affichant le message du leaderboard
@@ -41,27 +41,29 @@ public class PlayerVehicle : MonoBehaviour
     private const int maxLateCount = 3; // Nombre maximum de retards avant GameOver
     public bool lateCounted = false; // Indicateur si un retard a été compté
     private float totalTimePlayed = 0f; // Temps total passé en jeu
-
+    public float health = 1f; // Vie du joueur
+    public Slider healthBar; // Barre de vie
+    private bool wasRaining = false; // État précédent de la pluie
+    private bool wasFoggy = false; // État précédent du brouillard
     void Start()
     {
         GameObject counterObject = GameObject.Find("Salary"); // trouver l'objet de compteur dans la scène
         salary = 0; // initialiser l'argent collecté
         SetSalaryText(); // mettre à jour le texte du compteur
         timer = timeLimit; // initialiser le compteur de temps
-        gameOverText.gameObject.SetActive(false); // désactiver le texte de défaite
-        winText.gameObject.SetActive(false); // désactiver le texte de victoire
+        firedGameOverText.gameObject.SetActive(false); // désactiver le texte de défaite pour retards
+        dieGameOverText.gameObject.SetActive(false); // désactiver le texte de défaite pour vie à zéro
         startMenu.SetActive(true); // activer le menu de démarrage
-
         // ajout des écouteurs d'événements aux boutons
         startButton.onClick.AddListener(StartGame);
         restartButton.onClick.AddListener(RestartGame);
-
         LeaderboardText.gameObject.SetActive(false); // désactiver le texte du leaderboard
         endGameCountText.gameObject.SetActive(false); // désactiver le texte du compteur pour le leaderboard
         endGameTimerText.gameObject.SetActive(false); // désactiver le texte du timer pour le leaderboard
         LeaderboardTab.enabled = false; // désactiver le tableau des scores
         ShowHighScores(); // affichage du tableau des scores
         weatherController = FindObjectOfType<WeatherController>();
+        healthBar.value = health; // Initialisation la barre de vie
     }
 
     void Update()
@@ -69,15 +71,33 @@ public class PlayerVehicle : MonoBehaviour
         if (hasGameStarted && !gameOver)
         {
             // Ajuster la vitesse en fonction de la pluie
-            if (weatherController != null && weatherController.IsRaining)
+            if (weatherController != null)
             {
-                speed = rainSpeed; // Réduire la vitesse si la pluie est active
-                turnSpeed = 15.0f; // Réduire également la vitesse de rotation
-            }
-            else
-            {
-                speed = 10.0f; // Remettre la vitesse normale sinon
-                turnSpeed = 25.0f; // Remettre la rotation normale
+                if (weatherController.IsRaining && !wasRaining)
+                {
+                    speed = rainSpeed; // Réduire la vitesse si la pluie est active
+                    turnSpeed = 15.0f; // Réduire également la vitesse de rotation
+                    health -= 0.05f; // Perdre de la vie lorsque la pluie commence
+                    wasRaining = true;
+                }
+                else if (!weatherController.IsRaining && wasRaining)
+                {
+                    speed = 10.0f; // Remettre la vitesse normale sinon
+                    turnSpeed = 25.0f; // Remettre la rotation normale
+                    wasRaining = false;
+                }
+
+                if (weatherController.IsFoggy && !wasFoggy)
+                {
+                    health -= 0.03f; // Perdre de la vie lorsque le brouillard commence
+                    wasFoggy = true;
+                }
+                else if (!weatherController.IsFoggy && wasFoggy)
+                {
+                    speed = 10.0f; // Remettre la vitesse normale sinon
+                    turnSpeed = 25.0f; // Remettre la rotation normale
+                    wasFoggy = false;
+                }
             }
             // récupérer les inputs du joueur
             horizontalInput = Input.GetAxis("Horizontal");
@@ -90,7 +110,6 @@ public class PlayerVehicle : MonoBehaviour
             // mettre à jour le compteur de temps
             timer -= Time.deltaTime;
             totalTimePlayed += Time.deltaTime; // mettre à jour le temps total passé en jeu
-            //timerText.text = "Timer: " + Mathf.CeilToInt(timer);
             // mettre à jour le texte du compteur et de sa couleur
             if (timer >= 0)
             {
@@ -115,23 +134,24 @@ public class PlayerVehicle : MonoBehaviour
                     // Incrémente le compteur de retards
                     lateCount++;
                     lateCounted = true; // Retard a été compté pour ce cycle
+                    health -= 0.1f; // Perdre de la vie pour le retard
 
                     // Vérifie si le nombre maximum de retards est atteint
                     if (lateCount >= maxLateCount)
                     {
-                        GameOver();
+                        GameOver("You're fired !");
                     }
                 }
             }
 
-            // vérifier si le temps est écoulé
-            //if (timer <= 0)
-            //{
-            //    GameOver();
-            //    gameOver = true;
-            //    Time.timeScale = 0;
-            //    gameOverText.gameObject.SetActive(true);
-            //}
+            // Mettre à jour la barre de vie
+            healthBar.value = health;
+
+            // Vérifier si la vie est à zéro
+            if (health <= 0)
+            {
+                GameOver("You commit suicide !");
+            }
         }
     }
 
@@ -144,14 +164,6 @@ public class PlayerVehicle : MonoBehaviour
             salary = salary + 100;
             SetSalaryText();
         } 
-        // vérifier si le jeu est toujours en cours et si l'objet a le tag "FinishLine"
-        //else if (hasGameStarted && !gameOver && other.gameObject.CompareTag("FinishLine"))
-        //{
-        //    Win();
-        //    gameOver = true; // arrêter le jeu
-        //    Time.timeScale = 0;
-        //    winText.gameObject.SetActive(true);
-        //}
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -163,6 +175,7 @@ public class PlayerVehicle : MonoBehaviour
             salary -= salaryLostOnCollisionCar;
             // mise à jour du texte du compteur
             SetSalaryText();
+            health -= 0.25f; // Perdre 25% de vie
         }
         else if (collision.gameObject.CompareTag("BusAI"))
         {
@@ -170,6 +183,16 @@ public class PlayerVehicle : MonoBehaviour
             salary -= salaryLostOnCollisionBus;
             // mise à jour du texte du compteur
             SetSalaryText();
+            health -= 0.25f; // Perdre 25% de vie
+        }
+
+        // Mettre à jour la barre de vie
+        healthBar.value = health;
+
+        // Vérifier si la vie est à zéro
+        if (health <= 0)
+        {
+            GameOver("You commit suicide !");
         }
     }
 
@@ -180,12 +203,11 @@ public class PlayerVehicle : MonoBehaviour
         salaryText.text = "Salary: " + Mathf.Max(salary, -100000).ToString();
     }
 
-    public void GameOver()
+    public void GameOver(string message)
     {
         // active le texte de défaite, coupe le son du jeu et arrete le jeu
         gameOver = true;
         Time.timeScale = 0;
-        gameOverText.gameObject.SetActive(true);
         music.Stop();
         // active le menu de fin
         endMenu.SetActive(true);
@@ -198,39 +220,33 @@ public class PlayerVehicle : MonoBehaviour
         endGameTimerText.gameObject.SetActive(true); // activer le texte du timer pour le leaderboard
         endGameCountText.text = "Salary: " + salary.ToString(); // affichage du nombre de point
         endGameTimerText.text = "Timer: " + Mathf.CeilToInt(totalTimePlayed).ToString(); // Affichage du temps passé en jeu
+        // Mettre à jour le texte de fin de jeu en fonction de la raison
+        if (message == "You're fired !")
+        {
+            firedGameOverText.gameObject.SetActive(true);
+            dieGameOverText.gameObject.SetActive(false);
+        }
+        else if (message == "You commit suicide !")
+        {
+            firedGameOverText.gameObject.SetActive(false);
+            dieGameOverText.gameObject.SetActive(true);
+        }
     }
-
-    //void Win()
-    //{
-    //    // active le texte de victoire, coupe le son du jeu et arrete le jeu
-    //    gameOver = true;
-    //    Time.timeScale = 0;
-    //    winText.gameObject.SetActive(true);
-    //    music.Stop();
-    //    // active le menu de fin
-    //    endMenu.SetActive(true);
-    //    LeaderboardTab.enabled = true; // activer le tableau des score
-    //    highScores.Add((salary, timeLimit - timer)); // ajoute le score actuel du joueur
-    //    ShowHighScores(); // affichage du tableau des scores
-    //    endGameCountText.gameObject.SetActive(true); // activer le texte du leaderboard
-    //    endGameTimerText.gameObject.SetActive(true); // activer le texte du compteur pour le leaderboard
-    //    LeaderboardText.gameObject.SetActive(true); // activer le texte du timer pour le leaderboard
-    //    endGameCountText.text = "Count: " + salary.ToString(); // affichage du nombre de point
-    //    endGameTimerText.text = "Timer: " + Mathf.CeilToInt(timeLimit - timer).ToString(); // affichage du temps écoulé
-    //}
 
     public void StartGame()
     {
         hasGameStarted = true; // le jeu a commencé
         gameOver = false; // réinitialise l'indicateur de fin de jeu
         timer = timeLimit; // réinitialise le compteur de temps
-        gameOverText.gameObject.SetActive(false); // désactive le texte de défaite
-        winText.gameObject.SetActive(false); // désactive le texte de victoire
+        firedGameOverText.gameObject.SetActive(false); // désactive le texte de défaite pour retards
+        dieGameOverText.gameObject.SetActive(false); // désactive le texte de défaite pour vie à zéro
         salaryText.gameObject.SetActive(true); // active le compteur d'argent
         timerText.gameObject.SetActive(true); // active le compteur de temps
         gameObject.SetActive(true); // active le joueur
         startMenu.SetActive(false); // désactiver le menu de démarrage
         endMenu.SetActive(false); // désactiver le menu de fin
+        health = 1f; // Réinitialiser la vie
+        healthBar.value = health; // Réinitialiser la barre de vie
     }
 
     public void RestartGame()
@@ -243,8 +259,8 @@ public class PlayerVehicle : MonoBehaviour
         lateCount = 0; // Réinitialise le compteur de retards
         lateCounted = false; // Réinitialise l'indicateur de retard compté
         totalTimePlayed = 0f; // Réinitialise le temps total passé en jeu
-        gameOverText.gameObject.SetActive(false); // désactive le texte de défaite
-        winText.gameObject.SetActive(false); // désactive le texte de victoire
+        firedGameOverText.gameObject.SetActive(false); // désactive le texte de défaite pour retards
+        dieGameOverText.gameObject.SetActive(false); // désactive le texte de défaite pour vie à zéro
         salaryText.gameObject.SetActive(true); // activer le compteur d'argent
         timerText.gameObject.SetActive(true); // activer le compteur de temps
         gameObject.SetActive(true); // active le joueur
@@ -258,12 +274,8 @@ public class PlayerVehicle : MonoBehaviour
         music.Play(); // réactiver le son
         Time.timeScale = 1; // réinitialise le temps
         gameOver = false; // réinitialise gameOver
-        // réactiver toutes les pièces
-        //foreach (GameObject coin in coins)
-        //{
-        //    coin.SetActive(true);
-        //}
-
+        health = 1f; // Réinitialiser la vie
+        healthBar.value = health; // Réinitialiser la barre de vie
     }
 
     // affiche les 5 meilleurs scores triés par score et temps
@@ -280,8 +292,6 @@ public class PlayerVehicle : MonoBehaviour
         // parcourir les scores triés
         for (int i = 0; i < sortedScores.Count(); i++)
         {
-            // formater le temps en chaîne de caractères (afficher "DNF" pour les scores DNF)
-            //string timerText = (sortedScores.ElementAt(i).timer == float.NegativeInfinity) ? "DNF" : sortedScores.ElementAt(i).timer.ToString("F2");
             string timerText = Mathf.CeilToInt(sortedScores.ElementAt(i).timer).ToString();
             // ajoute le score à la chaîne de caractères
             highScoreText += string.Format("{0}. Salary : {1}, Timer : {2}\n", i + 1, sortedScores.ElementAt(i).salary, timerText);
