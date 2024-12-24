@@ -14,6 +14,9 @@ public class PlayerVehicle : MonoBehaviour
     public GameObject endMenu; // assigner le menu de fin dans l'inspecteur
     public Button startButton; // assigner le bouton de démarrage dans l'inspecteur
     public Button restartButton; // assigner le bouton de redémarrage dans l'inspecteur
+    public Button professionalRisksButton; // assigner le bouton Professional risks
+    public Button centreDuBurnoutButton; // assigner le bouton centreduburnout.org
+    public Button infoBurnoutButton; // assigner le bouton Info Burn-out
     private float speed = 10.0f; // vitesse de déplacement du véhicule
     private float turnSpeed = 25.0f; // vitesse de rotation du véhicule
     private float horizontalInput; // input horizontal du joueur
@@ -46,6 +49,10 @@ public class PlayerVehicle : MonoBehaviour
     public Slider healthBar; // Barre de vie
     private bool wasRaining = false; // État précédent de la pluie
     private bool wasFoggy = false; // État précédent du brouillard
+    // Liens de prévention
+    private string firedLink = "https://www.officiel-prevention.com/dossier/formation/fiches-metier/les-risques-professionnels-des-coursiers";
+    private string suicideLink1 = "https://centreduburnout.org/";
+    private string suicideLink2 = "https://www.inrs.fr/risques/epuisement-burnout/ce-qu-il-faut-retenir.html";
     public PostProcessVolume postProcessVolume; // Référence au Post-processing
     private Bloom bloom; // Référence au Bloom du Post-processing
     void Start()
@@ -60,6 +67,9 @@ public class PlayerVehicle : MonoBehaviour
         // ajout des écouteurs d'événements aux boutons
         startButton.onClick.AddListener(StartGame);
         restartButton.onClick.AddListener(RestartGame);
+        professionalRisksButton.onClick.AddListener(ProfessionalRisks);
+        centreDuBurnoutButton.onClick.AddListener(CentreDuBurnout);
+        infoBurnoutButton.onClick.AddListener(InfoBurnout);
         LeaderboardText.gameObject.SetActive(false); // désactiver le texte du leaderboard
         endGameCountText.gameObject.SetActive(false); // désactiver le texte du compteur pour le leaderboard
         endGameTimerText.gameObject.SetActive(false); // désactiver le texte du timer pour le leaderboard
@@ -72,6 +82,10 @@ public class PlayerVehicle : MonoBehaviour
         {
             postProcessVolume.profile.TryGetSettings(out bloom);
         }
+        // Désactive les boutons de prévention
+        professionalRisksButton.gameObject.SetActive(false);
+        centreDuBurnoutButton.gameObject.SetActive(false);
+        infoBurnoutButton.gameObject.SetActive(false);
     }
 
     void Update()
@@ -245,11 +259,17 @@ public class PlayerVehicle : MonoBehaviour
         {
             firedGameOverText.gameObject.SetActive(true);
             dieGameOverText.gameObject.SetActive(false);
+            professionalRisksButton.gameObject.SetActive(true);
+            centreDuBurnoutButton.gameObject.SetActive(false);
+            infoBurnoutButton.gameObject.SetActive(false);
         }
         else if (message == "You commit suicide !")
         {
             firedGameOverText.gameObject.SetActive(false);
             dieGameOverText.gameObject.SetActive(true);
+            professionalRisksButton.gameObject.SetActive(false);
+            centreDuBurnoutButton.gameObject.SetActive(true);
+            infoBurnoutButton.gameObject.SetActive(true);
         }
     }
 
@@ -267,6 +287,10 @@ public class PlayerVehicle : MonoBehaviour
         endMenu.SetActive(false); // désactiver le menu de fin
         health = 1f; // Réinitialiser la vie
         healthBar.value = health; // Réinitialiser la barre de vie
+        // Désactive les boutons de prévention
+        professionalRisksButton.gameObject.SetActive(false);
+        centreDuBurnoutButton.gameObject.SetActive(false);
+        infoBurnoutButton.gameObject.SetActive(false);
     }
 
     public void RestartGame()
@@ -296,6 +320,10 @@ public class PlayerVehicle : MonoBehaviour
         gameOver = false; // réinitialise gameOver
         health = 1f; // Réinitialiser la vie
         healthBar.value = health; // Réinitialiser la barre de vie
+        // Désactive les boutons de prévention
+        professionalRisksButton.gameObject.SetActive(false);
+        centreDuBurnoutButton.gameObject.SetActive(false);
+        infoBurnoutButton.gameObject.SetActive(false);
     }
 
     // affiche les 5 meilleurs scores triés par score et temps
@@ -318,5 +346,21 @@ public class PlayerVehicle : MonoBehaviour
         }
         // affiche les scores dans l'onglet Leaderboard
         LeaderboardTab.text = highScoreText;
+    }
+
+    // Méthodes pour ouvrir les URL
+    public void ProfessionalRisks()
+    {
+        Application.OpenURL(firedLink);
+    }
+
+    public void CentreDuBurnout()
+    {
+        Application.OpenURL(suicideLink1);
+    }
+
+    public void InfoBurnout()
+    {
+        Application.OpenURL(suicideLink2);
     }
 }
