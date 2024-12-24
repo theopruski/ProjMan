@@ -6,6 +6,7 @@ using TMPro;
 using UnityEngine.UI;
 using System.Linq;
 using UnityEngine.SocialPlatforms.Impl;
+using UnityEngine.Rendering.PostProcessing;
 
 public class PlayerVehicle : MonoBehaviour
 {
@@ -45,6 +46,8 @@ public class PlayerVehicle : MonoBehaviour
     public Slider healthBar; // Barre de vie
     private bool wasRaining = false; // État précédent de la pluie
     private bool wasFoggy = false; // État précédent du brouillard
+    public PostProcessVolume postProcessVolume; // Référence au Post-processing
+    private Bloom bloom; // Référence au Bloom du Post-processing
     void Start()
     {
         GameObject counterObject = GameObject.Find("Salary"); // trouver l'objet de compteur dans la scène
@@ -64,6 +67,11 @@ public class PlayerVehicle : MonoBehaviour
         ShowHighScores(); // affichage du tableau des scores
         weatherController = FindObjectOfType<WeatherController>();
         healthBar.value = health; // Initialisation la barre de vie
+        // Initialisation du post-processing
+        if (postProcessVolume != null)
+        {
+            postProcessVolume.profile.TryGetSettings(out bloom);
+        }
     }
 
     void Update()
@@ -147,6 +155,12 @@ public class PlayerVehicle : MonoBehaviour
             // Mettre à jour la barre de vie
             healthBar.value = health;
 
+            // Ajuste l'intensité du Bloom en fonction de la vie restante
+            if (bloom != null)
+            {
+                bloom.intensity.value = Mathf.Lerp(0f, 50f, 1f - health);
+            }
+
             // Vérifier si la vie est à zéro
             if (health <= 0)
             {
@@ -188,6 +202,12 @@ public class PlayerVehicle : MonoBehaviour
 
         // Mettre à jour la barre de vie
         healthBar.value = health;
+
+        // Ajuste l'intensité du Bloom en fonction de la vie restante
+        if (bloom != null)
+        {
+            bloom.intensity.value = Mathf.Lerp(0f, 50f, 1f - health); // Ajuste l'intensité du Bloom
+        }
 
         // Vérifier si la vie est à zéro
         if (health <= 0)
