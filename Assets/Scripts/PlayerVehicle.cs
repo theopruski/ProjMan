@@ -10,9 +10,10 @@ using UnityEngine.Rendering.PostProcessing;
 
 public class PlayerVehicle : MonoBehaviour
 {
-    public GameObject startMenu; // assigner le menu de démarrage dans l'inspecteur
+    // public GameObject startMenu; // assigner le menu de démarrage dans l'inspecteur
+    private bool autoStart = StartMenuLoader.autoStart; // menu de démarrage situé dans la scène StartMenu
     public GameObject endMenu; // assigner le menu de fin dans l'inspecteur
-    public Button startButton; // assigner le bouton de démarrage dans l'inspecteur
+    // public Button startButton; // assigner le bouton de démarrage dans l'inspecteur
     public Button restartButton; // assigner le bouton de redémarrage dans l'inspecteur
     public Button professionalRisksButton; // assigner le bouton Professional risks
     public Button centreDuBurnoutButton; // assigner le bouton centreduburnout.org
@@ -63,9 +64,14 @@ public class PlayerVehicle : MonoBehaviour
         timer = timeLimit; // initialiser le compteur de temps
         firedGameOverText.gameObject.SetActive(false); // désactiver le texte de défaite pour retards
         dieGameOverText.gameObject.SetActive(false); // désactiver le texte de défaite pour vie à zéro
-        startMenu.SetActive(true); // activer le menu de démarrage
+        //startMenu.SetActive(true); // activer le menu de démarrage
         // ajout des écouteurs d'événements aux boutons
-        startButton.onClick.AddListener(StartGame);
+        //startButton.onClick.AddListener(StartGame);
+        // si autoStart est vrai, démarrer le jeu directement
+        if (autoStart)
+        {
+            StartGame();
+        }
         restartButton.onClick.AddListener(RestartGame);
         professionalRisksButton.onClick.AddListener(ProfessionalRisks);
         centreDuBurnoutButton.onClick.AddListener(CentreDuBurnout);
@@ -283,7 +289,7 @@ public class PlayerVehicle : MonoBehaviour
         salaryText.gameObject.SetActive(true); // active le compteur d'argent
         timerText.gameObject.SetActive(true); // active le compteur de temps
         gameObject.SetActive(true); // active le joueur
-        startMenu.SetActive(false); // désactiver le menu de démarrage
+        //startMenu.SetActive(false); // désactiver le menu de démarrage
         endMenu.SetActive(false); // désactiver le menu de fin
         health = 1f; // Réinitialiser la vie
         healthBar.value = health; // Réinitialiser la barre de vie
