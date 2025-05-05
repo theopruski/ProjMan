@@ -204,7 +204,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &58568928
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -966,25 +966,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5ff28cadfe8b23f478fab0b05b76a7b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  endMenu: {fileID: 58568927}
-  restartButton: {fileID: 1102895646}
-  professionalRisksButton: {fileID: 2041774941}
-  centreDuBurnoutButton: {fileID: 1243651293}
-  infoBurnoutButton: {fileID: 1016586081}
   salary: 0
   timeLimit: 45
   timer: 0
   salaryText: {fileID: 664267107}
   timerText: {fileID: 1617095246}
-  firedGameOverText: {fileID: 1040947369}
-  dieGameOverText: {fileID: 2026989572}
   music: {fileID: 757083356}
-  LeaderboardText: {fileID: 2073034215}
-  endGameCountText: {fileID: 1230325908}
-  endGameTimerText: {fileID: 857147498}
   salaryLostOnCollisionCar: 50
   salaryLostOnCollisionBus: 75
-  LeaderboardTab: {fileID: 703459287}
   rainSpeed: 5
   lateCount: 0
   lateCounted: 0

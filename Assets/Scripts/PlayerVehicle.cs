@@ -7,17 +7,25 @@ using UnityEngine.UI;
 using System.Linq;
 using UnityEngine.SocialPlatforms.Impl;
 using UnityEngine.Rendering.PostProcessing;
+using UnityEngine.SceneManagement;
 
+// classe pour transmettre les données à EndMenuLoader
+public static class GameData
+{
+    public static int finalSalary;
+    public static float finalTime;
+    public static string gameOverMessage;
+}
 public class PlayerVehicle : MonoBehaviour
 {
     // public GameObject startMenu; // assigner le menu de démarrage dans l'inspecteur
-    private bool autoStart = StartMenuLoader.autoStart; // menu de démarrage situé dans la scène StartMenu
-    public GameObject endMenu; // assigner le menu de fin dans l'inspecteur
+    // private bool autoStart = StartMenuLoader.autoStart; // menu de démarrage situé dans la scène StartMenu
+    //public GameObject endMenu; // assigner le menu de fin dans l'inspecteur
     // public Button startButton; // assigner le bouton de démarrage dans l'inspecteur
-    public Button restartButton; // assigner le bouton de redémarrage dans l'inspecteur
-    public Button professionalRisksButton; // assigner le bouton Professional risks
-    public Button centreDuBurnoutButton; // assigner le bouton centreduburnout.org
-    public Button infoBurnoutButton; // assigner le bouton Info Burn-out
+    //public Button restartButton; // assigner le bouton de redémarrage dans l'inspecteur
+    //public Button professionalRisksButton; // assigner le bouton Professional risks
+    //public Button centreDuBurnoutButton; // assigner le bouton centreduburnout.org
+    //public Button infoBurnoutButton; // assigner le bouton Info Burn-out
     private float speed = 10.0f; // vitesse de déplacement du véhicule
     private float turnSpeed = 25.0f; // vitesse de rotation du véhicule
     private float horizontalInput; // input horizontal du joueur
@@ -28,17 +36,17 @@ public class PlayerVehicle : MonoBehaviour
     private bool gameOver; // indicateur si le jeu est terminé
     public TextMeshProUGUI salaryText; // texte affichant l'argent collecté
     public TextMeshProUGUI timerText; // texte affichant le compteur de temps
-    public TextMeshProUGUI firedGameOverText; // texte affichant le message de défaite pour retards
-    public TextMeshProUGUI dieGameOverText; // texte affichant le message de défaite pour vie à zéro
+    //public TextMeshProUGUI firedGameOverText; // texte affichant le message de défaite pour retards
+    //public TextMeshProUGUI dieGameOverText; // texte affichant le message de défaite pour vie à zéro
     public AudioSource music; // source audio de la musique
     private bool hasGameStarted = false; // vérifie si le jeu a commencé ou non
-    public TextMeshProUGUI LeaderboardText; // texte affichant le message du leaderboard
-    public TextMeshProUGUI endGameCountText; // texte affichant le compteur pour le leaderboard
-    public TextMeshProUGUI endGameTimerText; // texte affichant le timer pour le leaderboard
+    //public TextMeshProUGUI LeaderboardText; // texte affichant le message du leaderboard
+    //public TextMeshProUGUI endGameCountText; // texte affichant le compteur pour le leaderboard
+    //public TextMeshProUGUI endGameTimerText; // texte affichant le timer pour le leaderboard
     public int salaryLostOnCollisionCar = 50; // argent perdu a la collision avec les AIVehicle
     public int salaryLostOnCollisionBus = 75; // argent de pièce perdu a la collision avec les BusAI
-    public List<(int salary, float timer)> highScores = new List<(int, float)>();
-    public TextMeshProUGUI LeaderboardTab; // texte affichant le timer pour le leaderboard
+    //public List<(int salary, float timer)> highScores = new List<(int, float)>();
+    //public TextMeshProUGUI LeaderboardTab; // texte affichant le timer pour le leaderboard
     //public GameObject[] coins; // tableau pour stocker toutes les pièces
     private WeatherController weatherController; // Référence au script weatherController
     public float rainSpeed = 5.0f; // Vitesse réduite sous la pluie
@@ -51,9 +59,9 @@ public class PlayerVehicle : MonoBehaviour
     private bool wasRaining = false; // État précédent de la pluie
     private bool wasFoggy = false; // État précédent du brouillard
     // Liens de prévention
-    private string firedLink = "https://www.officiel-prevention.com/dossier/formation/fiches-metier/les-risques-professionnels-des-coursiers";
-    private string suicideLink1 = "https://centreduburnout.org/";
-    private string suicideLink2 = "https://www.inrs.fr/risques/epuisement-burnout/ce-qu-il-faut-retenir.html";
+    //private string firedLink = "https://www.officiel-prevention.com/dossier/formation/fiches-metier/les-risques-professionnels-des-coursiers";
+    //private string suicideLink1 = "https://centreduburnout.org/";
+    //private string suicideLink2 = "https://www.inrs.fr/risques/epuisement-burnout/ce-qu-il-faut-retenir.html";
     public PostProcessVolume postProcessVolume; // Référence au Post-processing
     private Bloom bloom; // Référence au Bloom du Post-processing
     void Start()
@@ -62,25 +70,25 @@ public class PlayerVehicle : MonoBehaviour
         salary = 0; // initialiser l'argent collecté
         SetSalaryText(); // mettre à jour le texte du compteur
         timer = timeLimit; // initialiser le compteur de temps
-        firedGameOverText.gameObject.SetActive(false); // désactiver le texte de défaite pour retards
-        dieGameOverText.gameObject.SetActive(false); // désactiver le texte de défaite pour vie à zéro
+        //firedGameOverText.gameObject.SetActive(false); // désactiver le texte de défaite pour retards
+        //dieGameOverText.gameObject.SetActive(false); // désactiver le texte de défaite pour vie à zéro
         //startMenu.SetActive(true); // activer le menu de démarrage
         // ajout des écouteurs d'événements aux boutons
         //startButton.onClick.AddListener(StartGame);
         // si autoStart est vrai, démarrer le jeu directement
-        if (autoStart)
+        if (StartMenuLoader.autoStart)
         {
             StartGame();
         }
-        restartButton.onClick.AddListener(RestartGame);
-        professionalRisksButton.onClick.AddListener(ProfessionalRisks);
-        centreDuBurnoutButton.onClick.AddListener(CentreDuBurnout);
-        infoBurnoutButton.onClick.AddListener(InfoBurnout);
-        LeaderboardText.gameObject.SetActive(false); // désactiver le texte du leaderboard
-        endGameCountText.gameObject.SetActive(false); // désactiver le texte du compteur pour le leaderboard
-        endGameTimerText.gameObject.SetActive(false); // désactiver le texte du timer pour le leaderboard
-        LeaderboardTab.enabled = false; // désactiver le tableau des scores
-        ShowHighScores(); // affichage du tableau des scores
+        //restartButton.onClick.AddListener(RestartGame);
+        //professionalRisksButton.onClick.AddListener(ProfessionalRisks);
+        //centreDuBurnoutButton.onClick.AddListener(CentreDuBurnout);
+        //infoBurnoutButton.onClick.AddListener(InfoBurnout);
+        //LeaderboardText.gameObject.SetActive(false); // désactiver le texte du leaderboard
+        //endGameCountText.gameObject.SetActive(false); // désactiver le texte du compteur pour le leaderboard
+        //endGameTimerText.gameObject.SetActive(false); // désactiver le texte du timer pour le leaderboard
+        //LeaderboardTab.enabled = false; // désactiver le tableau des scores
+        //ShowHighScores(); // affichage du tableau des scores
         weatherController = FindObjectOfType<WeatherController>();
         healthBar.value = health; // Initialisation la barre de vie
         // Initialisation du post-processing
@@ -89,9 +97,9 @@ public class PlayerVehicle : MonoBehaviour
             postProcessVolume.profile.TryGetSettings(out bloom);
         }
         // Désactive les boutons de prévention
-        professionalRisksButton.gameObject.SetActive(false);
-        centreDuBurnoutButton.gameObject.SetActive(false);
-        infoBurnoutButton.gameObject.SetActive(false);
+        //professionalRisksButton.gameObject.SetActive(false);
+        //centreDuBurnoutButton.gameObject.SetActive(false);
+        //infoBurnoutButton.gameObject.SetActive(false);
     }
 
     void Update()
@@ -250,33 +258,40 @@ public class PlayerVehicle : MonoBehaviour
         Time.timeScale = 0;
         music.Stop();
         // active le menu de fin
-        endMenu.SetActive(true);
-        LeaderboardTab.enabled = true; // activer le tableau des scores
+        //endMenu.SetActive(true);
+        //LeaderboardTab.enabled = true; // activer le tableau des scores
         //highScores.Add((salary, float.NegativeInfinity)); // ajoute le score actuel du joueur
-        highScores.Add((salary, totalTimePlayed)); // Ajouter le score actuel du joueur
-        ShowHighScores(); // affichage du tableau des scores
-        LeaderboardText.gameObject.SetActive(true); // activer le texte du leaderboard
-        endGameCountText.gameObject.SetActive(true); // activer le texte du compteur pour le leaderboard
-        endGameTimerText.gameObject.SetActive(true); // activer le texte du timer pour le leaderboard
-        endGameCountText.text = "Salary: " + salary.ToString(); // affichage du nombre de point
-        endGameTimerText.text = "Timer: " + Mathf.CeilToInt(totalTimePlayed).ToString(); // Affichage du temps passé en jeu
+        //highScores.Add((salary, totalTimePlayed)); // Ajouter le score actuel du joueur
+        //ShowHighScores(); // affichage du tableau des scores
+        //LeaderboardText.gameObject.SetActive(true); // activer le texte du leaderboard
+        //endGameCountText.gameObject.SetActive(true); // activer le texte du compteur pour le leaderboard
+        //endGameTimerText.gameObject.SetActive(true); // activer le texte du timer pour le leaderboard
+        //endGameCountText.text = "Salary: " + salary.ToString(); // affichage du nombre de point
+        //endGameTimerText.text = "Timer: " + Mathf.CeilToInt(totalTimePlayed).ToString(); // Affichage du temps passé en jeu
         // Mettre à jour le texte de fin de jeu en fonction de la raison
-        if (message == "You're fired !")
-        {
-            firedGameOverText.gameObject.SetActive(true);
-            dieGameOverText.gameObject.SetActive(false);
-            professionalRisksButton.gameObject.SetActive(true);
-            centreDuBurnoutButton.gameObject.SetActive(false);
-            infoBurnoutButton.gameObject.SetActive(false);
-        }
-        else if (message == "You commit suicide !")
-        {
-            firedGameOverText.gameObject.SetActive(false);
-            dieGameOverText.gameObject.SetActive(true);
-            professionalRisksButton.gameObject.SetActive(false);
-            centreDuBurnoutButton.gameObject.SetActive(true);
-            infoBurnoutButton.gameObject.SetActive(true);
-        }
+        //if (message == "You're fired !")
+        //{
+        //    firedGameOverText.gameObject.SetActive(true);
+        //    dieGameOverText.gameObject.SetActive(false);
+        //    professionalRisksButton.gameObject.SetActive(true);
+        //    centreDuBurnoutButton.gameObject.SetActive(false);
+        //    infoBurnoutButton.gameObject.SetActive(false);
+        //}
+        //else if (message == "You commit suicide !")
+        //{
+        //    firedGameOverText.gameObject.SetActive(false);
+        //    dieGameOverText.gameObject.SetActive(true);
+        //    professionalRisksButton.gameObject.SetActive(false);
+        //    centreDuBurnoutButton.gameObject.SetActive(true);
+        //    infoBurnoutButton.gameObject.SetActive(true);
+        //}
+        // Transfert des données vers la scène EndMenu
+        GameData.finalSalary = salary;
+        GameData.finalTime = totalTimePlayed;
+        GameData.gameOverMessage = message;
+
+        // Chargement de la scène EndMenu
+        SceneManager.LoadScene("EndMenus");
     }
 
     public void StartGame()
@@ -284,19 +299,19 @@ public class PlayerVehicle : MonoBehaviour
         hasGameStarted = true; // le jeu a commencé
         gameOver = false; // réinitialise l'indicateur de fin de jeu
         timer = timeLimit; // réinitialise le compteur de temps
-        firedGameOverText.gameObject.SetActive(false); // désactive le texte de défaite pour retards
-        dieGameOverText.gameObject.SetActive(false); // désactive le texte de défaite pour vie à zéro
+        //firedGameOverText.gameObject.SetActive(false); // désactive le texte de défaite pour retards
+        //dieGameOverText.gameObject.SetActive(false); // désactive le texte de défaite pour vie à zéro
         salaryText.gameObject.SetActive(true); // active le compteur d'argent
         timerText.gameObject.SetActive(true); // active le compteur de temps
         gameObject.SetActive(true); // active le joueur
         //startMenu.SetActive(false); // désactiver le menu de démarrage
-        endMenu.SetActive(false); // désactiver le menu de fin
+        //endMenu.SetActive(false); // désactiver le menu de fin
         health = 1f; // Réinitialiser la vie
         healthBar.value = health; // Réinitialiser la barre de vie
         // Désactive les boutons de prévention
-        professionalRisksButton.gameObject.SetActive(false);
-        centreDuBurnoutButton.gameObject.SetActive(false);
-        infoBurnoutButton.gameObject.SetActive(false);
+        //professionalRisksButton.gameObject.SetActive(false);
+        //centreDuBurnoutButton.gameObject.SetActive(false);
+        //infoBurnoutButton.gameObject.SetActive(false);
     }
 
     public void RestartGame()
@@ -309,12 +324,12 @@ public class PlayerVehicle : MonoBehaviour
         lateCount = 0; // Réinitialise le compteur de retards
         lateCounted = false; // Réinitialise l'indicateur de retard compté
         totalTimePlayed = 0f; // Réinitialise le temps total passé en jeu
-        firedGameOverText.gameObject.SetActive(false); // désactive le texte de défaite pour retards
-        dieGameOverText.gameObject.SetActive(false); // désactive le texte de défaite pour vie à zéro
+        //firedGameOverText.gameObject.SetActive(false); // désactive le texte de défaite pour retards
+        //dieGameOverText.gameObject.SetActive(false); // désactive le texte de défaite pour vie à zéro
         salaryText.gameObject.SetActive(true); // activer le compteur d'argent
         timerText.gameObject.SetActive(true); // activer le compteur de temps
         gameObject.SetActive(true); // active le joueur
-        endMenu.SetActive(false); // désactive le menu de fin
+        //endMenu.SetActive(false); // désactive le menu de fin
         // réinitialise la position du joueur
         transform.position = new Vector3(-791.7f, 254.04f, 2810.54f);
         transform.rotation = Quaternion.Euler(0f, -242.472f, 0f);
@@ -327,46 +342,46 @@ public class PlayerVehicle : MonoBehaviour
         health = 1f; // Réinitialiser la vie
         healthBar.value = health; // Réinitialiser la barre de vie
         // Désactive les boutons de prévention
-        professionalRisksButton.gameObject.SetActive(false);
-        centreDuBurnoutButton.gameObject.SetActive(false);
-        infoBurnoutButton.gameObject.SetActive(false);
+        //professionalRisksButton.gameObject.SetActive(false);
+        //centreDuBurnoutButton.gameObject.SetActive(false);
+        //infoBurnoutButton.gameObject.SetActive(false);
     }
 
-    // affiche les 5 meilleurs scores triés par score et temps
-    void ShowHighScores()
-    {
-        var sortedScores = highScores.OrderByDescending(score => score.salary) // tri en fonction du nombre de pièces
-                                     .ThenBy(score => score.timer == float.NegativeInfinity ? float.PositiveInfinity : score.timer) // tri en fonction du temps (les scores DNF sont mis en dernier)
-                                     .ThenByDescending(score => score.salary < 0 ? score.salary : 0) // tri en fonction des scores négatifs
-                                     .ThenBy(score => score.timer == float.NegativeInfinity ? float.PositiveInfinity : score.timer) // tri en fonction du temps pour les scores négatifs
-                                     .Take(5); // prend les 5 premiers scores
+    //// affiche les 5 meilleurs scores triés par score et temps
+    //void ShowHighScores()
+    //{
+    //    var sortedScores = highScores.OrderByDescending(score => score.salary) // tri en fonction du nombre de pièces
+    //                                 .ThenBy(score => score.timer == float.NegativeInfinity ? float.PositiveInfinity : score.timer) // tri en fonction du temps (les scores DNF sont mis en dernier)
+    //                                 .ThenByDescending(score => score.salary < 0 ? score.salary : 0) // tri en fonction des scores négatifs
+    //                                 .ThenBy(score => score.timer == float.NegativeInfinity ? float.PositiveInfinity : score.timer) // tri en fonction du temps pour les scores négatifs
+    //                                 .Take(5); // prend les 5 premiers scores
 
-        // crée une chaîne de caractères pour afficher les scores
-        string highScoreText = "High Scores :\n";
-        // parcourir les scores triés
-        for (int i = 0; i < sortedScores.Count(); i++)
-        {
-            string timerText = Mathf.CeilToInt(sortedScores.ElementAt(i).timer).ToString();
-            // ajoute le score à la chaîne de caractères
-            highScoreText += string.Format("{0}. Salary : {1}, Timer : {2}\n", i + 1, sortedScores.ElementAt(i).salary, timerText);
-        }
-        // affiche les scores dans l'onglet Leaderboard
-        LeaderboardTab.text = highScoreText;
-    }
+    //    // crée une chaîne de caractères pour afficher les scores
+    //    string highScoreText = "High Scores :\n";
+    //    // parcourir les scores triés
+    //    for (int i = 0; i < sortedScores.Count(); i++)
+    //    {
+    //        string timerText = Mathf.CeilToInt(sortedScores.ElementAt(i).timer).ToString();
+    //        // ajoute le score à la chaîne de caractères
+    //        highScoreText += string.Format("{0}. Salary : {1}, Timer : {2}\n", i + 1, sortedScores.ElementAt(i).salary, timerText);
+    //    }
+    //    // affiche les scores dans l'onglet Leaderboard
+    //    LeaderboardTab.text = highScoreText;
+    //}
 
-    // Méthodes pour ouvrir les URL
-    public void ProfessionalRisks()
-    {
-        Application.OpenURL(firedLink);
-    }
+    //// Méthodes pour ouvrir les URL
+    //public void ProfessionalRisks()
+    //{
+    //    Application.OpenURL(firedLink);
+    //}
 
-    public void CentreDuBurnout()
-    {
-        Application.OpenURL(suicideLink1);
-    }
+    //public void CentreDuBurnout()
+    //{
+    //    Application.OpenURL(suicideLink1);
+    //}
 
-    public void InfoBurnout()
-    {
-        Application.OpenURL(suicideLink2);
-    }
+    //public void InfoBurnout()
+    //{
+    //    Application.OpenURL(suicideLink2);
+    //}
 }
