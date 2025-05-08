@@ -129,11 +129,17 @@ public class EndMenuLoader : MonoBehaviour
         {
             firedGameOverText.gameObject.SetActive(true);
             dieGameOverText.gameObject.SetActive(false);
+            professionalRisksButton.gameObject.SetActive(true);
+            centreDuBurnoutButton.gameObject.SetActive(false);
+            infoBurnoutButton.gameObject.SetActive(false);
         }
         else if (message == "You commit suicide !")
         {
             firedGameOverText.gameObject.SetActive(false);
             dieGameOverText.gameObject.SetActive(true);
+            professionalRisksButton.gameObject.SetActive(false);
+            centreDuBurnoutButton.gameObject.SetActive(true);
+            infoBurnoutButton.gameObject.SetActive(true);
         }
     }
 }
