@@ -1,4 +1,4 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -22,10 +22,10 @@ public class EndMenuLoader : MonoBehaviour
     public TextMeshProUGUI firedGameOverText;
     public TextMeshProUGUI dieGameOverText;
 
-    // scène principale à recharger
+    // scÃ¨ne principale Ã  recharger
     public string mainSceneName = "Projet Manhattan";
 
-    // commande à utiliser
+    // commande Ã  utiliser
     public InputActionProperty restartAction;
     public InputActionProperty professionalRisksAction;
     public InputActionProperty centreDuBurnoutAction;
@@ -34,62 +34,96 @@ public class EndMenuLoader : MonoBehaviour
     // liste des scores (salaire, temps)
     private List<(int salary, float timer)> highScores = new List<(int, float)>();
 
-    // liens de prévention boutons de prévention
+    // liens de prÃ©vention boutons de prÃ©vention
     private string firedLink = "https://www.officiel-prevention.com/dossier/formation/fiches-metier/les-risques-professionnels-des-coursiers";
     private string suicideLink1 = "https://centreduburnout.org/";
     private string suicideLink2 = "https://www.inrs.fr/risques/epuisement-burnout/ce-qu-il-faut-retenir.html";
 
     void Start()
     {
-        // affecte les événements de clic sur les boutons
+        // affecte les Ã©vÃ©nements de clic sur les boutons
         restartButton.onClick.AddListener(RestartGame);
         professionalRisksButton.onClick.AddListener(ProfessionalRisks);
         centreDuBurnoutButton.onClick.AddListener(CentreDuBurnout);
         infoBurnoutButton.onClick.AddListener(InfoBurnout);
 
-        // configure les actions d'entrée (Input System)
+        // affiche le score
+        LoadHighScores();
+        ShowHighScores();
+
+        // configure les actions d'entrÃ©e (Input System)
         restartAction.action.performed += _ => RestartGame();
         professionalRisksAction.action.performed += _ => ProfessionalRisks();
         centreDuBurnoutAction.action.performed += _ => CentreDuBurnout();
         infoBurnoutAction.action.performed += _ => InfoBurnout();
 
-        // active les actions d'entrée
+        // active les actions d'entrÃ©e
         restartAction.action.Enable();
         professionalRisksAction.action.Enable();
         centreDuBurnoutAction.action.Enable();
         infoBurnoutAction.action.Enable();
 
-        // masque les messages de fin de jeu au démarrage
+        // masque les messages de fin de jeu au dÃ©marrage
         firedGameOverText.gameObject.SetActive(false);
         dieGameOverText.gameObject.SetActive(false);
 
         // affiche les meilleurs scores
         ShowHighScores();
 
-        // affiche les données de fin de partie si disponibles
-        if (!string.IsNullOrEmpty(GameData.gameOverMessage))
+        // âž• Affiche toujours le score final
+        GameOver(GameData.gameOverMessage, GameData.finalSalary, GameData.finalTime);
+    }
+
+
+    [System.Serializable]
+    public class ScoreEntry
+    {
+        public int salary;
+        public float timer;
+    }
+
+    [System.Serializable]
+    public class ScoreList
+    {
+        public List<ScoreEntry> scores = new List<ScoreEntry>();
+    }
+
+    // sauvegarde les scores
+    void SaveHighScores()
+    {
+        ScoreList list = new ScoreList();
+        foreach (var entry in highScores)
         {
-            GameOver(GameData.gameOverMessage, GameData.finalSalary, GameData.finalTime);
+            list.scores.Add(new ScoreEntry { salary = entry.salary, timer = entry.timer });
+        }
+
+        string json = JsonUtility.ToJson(list);
+        PlayerPrefs.SetString("HighScores", json);
+        PlayerPrefs.Save();
+    }
+
+
+    // recupÃ¨re les scores
+    void LoadHighScores()
+    {
+        string json = PlayerPrefs.GetString("HighScores", "");
+        if (!string.IsNullOrEmpty(json))
+        {
+            ScoreList list = JsonUtility.FromJson<ScoreList>(json);
+            highScores = list.scores.Select(e => (e.salary, e.timer)).ToList();
         }
     }
 
-    // affiche les 5 meilleurs scores triés par score et temps
+
+    // montre les 5 plus haut score
     void ShowHighScores()
     {
-        var sortedScores = highScores
-            .OrderByDescending(score => score.salary) // tri en fonction du nombre de pièces
-            .ThenBy(score => score.timer == float.NegativeInfinity ? float.PositiveInfinity : score.timer) // tri en fonction du temps (les scores DNF sont mis en dernier)
-            .Take(5); // prend les 5 premiers scores
-        // crée une chaîne de caractères pour afficher les scores
         string highScoreText = "High Scores :\n";
-        // parcourir les scores triés
-        for (int i = 0; i < sortedScores.Count(); i++)
+        for (int i = 0; i < highScores.Count; i++)
         {
-            string timerText = Mathf.CeilToInt(sortedScores.ElementAt(i).timer).ToString();
-            // ajoute le score à la chaîne de caractères
-            highScoreText += string.Format("{0}. Salary : {1}, Timer : {2}\n", i + 1, sortedScores.ElementAt(i).salary, timerText);
+            string timerText = Mathf.CeilToInt(highScores[i].timer).ToString();
+            highScoreText += $"{i + 1}. Salary : {highScores[i].salary}, Timer : {timerText}\n";
         }
-        // affiche les scores dans l'onglet Leaderboard
         LeaderboardTab.text = highScoreText;
     }
 
@@ -111,20 +145,25 @@ public class EndMenuLoader : MonoBehaviour
         Application.OpenURL(suicideLink2);
     }
 
-    // recharge la scène principale pour recommencer le jeu
+    // recharge la scÃ¨ne principale pour recommencer le jeu
     public void RestartGame()
     {
-        Time.timeScale = 1f; // Au cas où le temps serait gelé
+        Time.timeScale = 1f; // Au cas oÃ¹ le temps serait gelÃ©
         SceneManager.LoadScene(mainSceneName);
     }
 
-    // affiche les messages et données à la fin de la partie
+    // affiche les messages et donnÃ©es Ã  la fin de la partie
     public void GameOver(string message, int salary, float totalTimePlayed)
     {
+        // Utilise un message par dÃ©faut si aucun n'est fourni
+        if (string.IsNullOrEmpty(message))
+            message = "Game Over";
+
+        // Met Ã  jour les textes de score final
         endGameCountText.text = "Salary: " + salary.ToString();
         endGameTimerText.text = "Timer: " + Mathf.CeilToInt(totalTimePlayed).ToString();
 
-        // affiche le message en fonction de la cause du GameOver
+        // Affiche ou masque les bons Ã©lÃ©ments selon le type de Game Over
         if (message == "You're fired !")
         {
             firedGameOverText.gameObject.SetActive(true);
@@ -141,5 +180,32 @@ public class EndMenuLoader : MonoBehaviour
             centreDuBurnoutButton.gameObject.SetActive(true);
             infoBurnoutButton.gameObject.SetActive(true);
         }
+        else
+        {
+            // Cas gÃ©nÃ©ral pour d'autres messages
+            firedGameOverText.gameObject.SetActive(false);
+            dieGameOverText.gameObject.SetActive(false);
+            professionalRisksButton.gameObject.SetActive(false);
+            centreDuBurnoutButton.gameObject.SetActive(false);
+            infoBurnoutButton.gameObject.SetActive(false);
+        }
+
+        // Enregistre ce score dans la liste des meilleurs scores
+        highScores.Add((salary, totalTimePlayed));
+
+        // Trie et garde uniquement les 5 meilleurs
+        highScores = highScores
+            .OrderByDescending(s => s.salary)
+            .ThenBy(s => s.timer)
+            .Take(5)
+            .ToList();
+
+        // Sauvegarde dans PlayerPrefs
+        SaveHighScores();
+
+        // RÃ©affiche le leaderboard
+        ShowHighScores();
+
     }
+
 }
