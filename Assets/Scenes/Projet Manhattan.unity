@@ -894,7 +894,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 109434732395451517, guid: 65847589f926b734d9eaed6e25f0046b, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.6
+      value: -0.119
       objectReference: {fileID: 0}
     - target: {fileID: 109434732395451517, guid: 65847589f926b734d9eaed6e25f0046b, type: 3}
       propertyPath: m_LocalPosition.z
@@ -6056,7 +6056,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5686134208185136530, guid: 1fd3a7c43c8190f4d8c167ebde694364, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.6
+      value: -0.119
       objectReference: {fileID: 0}
     - target: {fileID: 5686134208185136530, guid: 1fd3a7c43c8190f4d8c167ebde694364, type: 3}
       propertyPath: m_LocalPosition.z
@@ -11231,23 +11231,7 @@ MonoBehaviour:
       m_Id: 633a6474-d774-4417-8dfc-8cb41ea236ab
       m_Processors: 
       m_Interactions: 
-      m_SingletonActionBindings:
-      - m_Name: 
-        m_Id: e8db4a1f-c0fa-44ce-924e-b096aac8fe56
-        m_Path: <XRHMD>/centerEyePosition
-        m_Interactions: 
-        m_Processors: 
-        m_Groups: 
-        m_Action: Position
-        m_Flags: 0
-      - m_Name: 
-        m_Id: fce36f63-dfb2-4e7d-978b-caba7426dfb7
-        m_Path: <HandheldARInputDevice>/devicePosition
-        m_Interactions: 
-        m_Processors: 
-        m_Groups: 
-        m_Action: Position
-        m_Flags: 0
+      m_SingletonActionBindings: []
       m_Flags: 0
     m_Reference: {fileID: 0}
   m_RotationInput:
@@ -11287,15 +11271,7 @@ MonoBehaviour:
       m_Id: 2eaf72de-6454-4190-8a85-bb3c4ebd6218
       m_Processors: 
       m_Interactions: 
-      m_SingletonActionBindings:
-      - m_Name: 
-        m_Id: 23b8b34e-49de-4c4a-b34f-1d98057f1a37
-        m_Path: <XRHMD>/trackingState
-        m_Interactions: 
-        m_Processors: 
-        m_Groups: 
-        m_Action: Tracking State
-        m_Flags: 0
+      m_SingletonActionBindings: []
       m_Flags: 0
     m_Reference: {fileID: 0}
   m_PositionAction:
@@ -11509,7 +11485,7 @@ Transform:
   m_GameObject: {fileID: 1948540541}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: 0.012812227, z: 0, w: -0.9999179}
-  m_LocalPosition: {x: -0.03, y: 0.11, z: 0.9}
+  m_LocalPosition: {x: -0.03, y: 1.86, z: 0.9}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -11841,7 +11817,7 @@ Transform:
   m_GameObject: {fileID: 2039522733}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 0.03, y: 1.5499, z: 0.188}
+  m_LocalPosition: {x: 0.03, y: -0.169, z: 0.188}
   m_LocalScale: {x: 0.02431451, y: 0.1723046, z: 0.2219866}
   m_ConstrainProportionsScale: 0
   m_Children: []
