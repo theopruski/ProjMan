@@ -64,6 +64,12 @@ public class PlayerVehicle : MonoBehaviour
     //private string suicideLink2 = "https://www.inrs.fr/risques/epuisement-burnout/ce-qu-il-faut-retenir.html";
     public PostProcessVolume postProcessVolume; // Référence au Post-processing
     private Bloom bloom; // Référence au Bloom du Post-processing
+    public Transform steeringWheel; // Référence au volant
+    public Transform leftHand; // Référence à la main gauche
+    public Transform rightHand; // Référence à la main droite
+    public float maxSteeringAngle = 45f; // Angle max de rotation du volant
+    public float handRotationMultiplier = 1f; // Ajuste l'intensité de la rotation des mains par rapport au volant
+
     void Start()
     {
         GameObject counterObject = GameObject.Find("Salary"); // trouver l'objet de compteur dans la scène
@@ -142,6 +148,25 @@ public class PlayerVehicle : MonoBehaviour
             // déplacer le véhicule en avant
             transform.Translate(Vector3.forward * Time.deltaTime * speed * forwardInput);
             transform.Rotate(Vector3.up, Time.deltaTime * turnSpeed * horizontalInput);
+
+            // vérifie si le volant existe dans la scène
+            if (steeringWheel != null)
+            {
+                // calcule l'angle de rotation du volant
+                float steeringAngle = horizontalInput * maxSteeringAngle;
+                // applique la rotation au volant
+                steeringWheel.localRotation = Quaternion.Euler(-steeringAngle, 90f, 0f);
+            }
+            // vérifie que les deux mains sont bien assignées dans la scène
+            if (leftHand != null && rightHand != null)
+            {
+                // calcule un angle de rotation pour les mains
+                float handAngle = horizontalInput * maxSteeringAngle * handRotationMultiplier;
+                // applique une rotation à la main gauche
+                leftHand.localRotation = Quaternion.Euler(0f, 0f, 90f - handAngle);
+                // applique une rotation à la main droite
+                rightHand.localRotation = Quaternion.Euler(0f, 0f, -90f - handAngle);
+            }
 
             // mettre à jour le compteur de temps
             timer -= Time.deltaTime;
