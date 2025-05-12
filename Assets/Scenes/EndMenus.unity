@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.55116737, g: 0.79872, b: 0.97018695, a: 1}
+  m_IndirectSpecularColor: {r: 0.549063, g: 0.79582804, b: 0.9728653, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1110,7 +1110,15 @@ MonoBehaviour:
       m_Id: 5ac7792a-bd6a-4b96-a9c5-a7e4175a004d
       m_Processors: 
       m_Interactions: 
-      m_SingletonActionBindings: []
+      m_SingletonActionBindings:
+      - m_Name: 
+        m_Id: 704c3e5b-31bf-4e30-8cb7-1f4f9f293f43
+        m_Path: <Keyboard>/v
+        m_Interactions: 
+        m_Processors: 
+        m_Groups: 
+        m_Action: Professional Risks
+        m_Flags: 0
       m_Flags: 0
     m_Reference: {fileID: 0}
   centreDuBurnoutAction:

@@ -41,6 +41,8 @@ public class EndMenuLoader : MonoBehaviour
 
     void Start()
     {
+        /// ClearHighScores(); // efface le score, à surprimer plus tard
+
         // affecte les événements de clic sur les boutons
         restartButton.onClick.AddListener(RestartGame);
         professionalRisksButton.onClick.AddListener(ProfessionalRisks);
@@ -152,6 +154,14 @@ public class EndMenuLoader : MonoBehaviour
         SceneManager.LoadScene(mainSceneName);
     }
 
+    // efface les données du tableau de score
+    public void ClearHighScores()
+    {
+        PlayerPrefs.DeleteKey("HighScores");
+        PlayerPrefs.Save();
+        highScores.Clear();
+    }
+
     // affiche les messages et données à la fin de la partie
     public void GameOver(string message, int salary, float totalTimePlayed)
     {
@@ -191,7 +201,10 @@ public class EndMenuLoader : MonoBehaviour
         }
 
         // Enregistre ce score dans la liste des meilleurs scores
-        highScores.Add((salary, totalTimePlayed));
+        if (salary != 0 && totalTimePlayed != 0f)
+        {
+            highScores.Add((salary, totalTimePlayed));
+        }
 
         // Trie et garde uniquement les 5 meilleurs
         highScores = highScores
