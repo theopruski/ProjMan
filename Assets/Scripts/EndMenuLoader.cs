@@ -9,11 +9,8 @@ using System.Linq;
 
 public class EndMenuLoader : MonoBehaviour
 {
-    // boutons de l'UI
+    // boutons restart
     public Button restartButton;
-    public Button professionalRisksButton;
-    public Button centreDuBurnoutButton;
-    public Button infoBurnoutButton;
 
     // textes de l'UI
     public TextMeshProUGUI LeaderboardTab;
@@ -27,17 +24,9 @@ public class EndMenuLoader : MonoBehaviour
 
     // commande à utiliser
     public InputActionProperty restartAction;
-    public InputActionProperty professionalRisksAction;
-    public InputActionProperty centreDuBurnoutAction;
-    public InputActionProperty infoBurnoutAction;
 
     // liste des scores (salaire, temps)
     private List<(int salary, float timer)> highScores = new List<(int, float)>();
-
-    // liens de prévention boutons de prévention
-    private string firedLink = "https://www.officiel-prevention.com/dossier/formation/fiches-metier/les-risques-professionnels-des-coursiers";
-    private string suicideLink1 = "https://centreduburnout.org/";
-    private string suicideLink2 = "https://www.inrs.fr/risques/epuisement-burnout/ce-qu-il-faut-retenir.html";
 
     void Start()
     {
@@ -45,9 +34,6 @@ public class EndMenuLoader : MonoBehaviour
 
         // affecte les événements de clic sur les boutons
         restartButton.onClick.AddListener(RestartGame);
-        professionalRisksButton.onClick.AddListener(ProfessionalRisks);
-        centreDuBurnoutButton.onClick.AddListener(CentreDuBurnout);
-        infoBurnoutButton.onClick.AddListener(InfoBurnout);
 
         // affiche le score
         LoadHighScores();
@@ -55,15 +41,9 @@ public class EndMenuLoader : MonoBehaviour
 
         // configure les actions d'entrée (Input System)
         restartAction.action.performed += _ => RestartGame();
-        professionalRisksAction.action.performed += _ => ProfessionalRisks();
-        centreDuBurnoutAction.action.performed += _ => CentreDuBurnout();
-        infoBurnoutAction.action.performed += _ => InfoBurnout();
 
         // active les actions d'entrée
         restartAction.action.Enable();
-        professionalRisksAction.action.Enable();
-        centreDuBurnoutAction.action.Enable();
-        infoBurnoutAction.action.Enable();
 
         // masque les messages de fin de jeu au démarrage
         firedGameOverText.gameObject.SetActive(false);
@@ -129,23 +109,7 @@ public class EndMenuLoader : MonoBehaviour
         LeaderboardTab.text = highScoreText;
     }
 
-    // ouvre un lien vers les risques professionnels
-    public void ProfessionalRisks()
-    {
-        Application.OpenURL(firedLink);
-    }
 
-    // ouvre un lien vers le centre du burnout
-    public void CentreDuBurnout()
-    {
-        Application.OpenURL(suicideLink1);
-    }
-
-    // ouvre un lien vers des infos sur le burnout
-    public void InfoBurnout()
-    {
-        Application.OpenURL(suicideLink2);
-    }
 
     // recharge la scène principale pour recommencer le jeu
     public void RestartGame()
@@ -178,26 +142,17 @@ public class EndMenuLoader : MonoBehaviour
         {
             firedGameOverText.gameObject.SetActive(true);
             dieGameOverText.gameObject.SetActive(false);
-            professionalRisksButton.gameObject.SetActive(true);
-            centreDuBurnoutButton.gameObject.SetActive(false);
-            infoBurnoutButton.gameObject.SetActive(false);
         }
         else if (message == "You commit suicide !")
         {
             firedGameOverText.gameObject.SetActive(false);
             dieGameOverText.gameObject.SetActive(true);
-            professionalRisksButton.gameObject.SetActive(false);
-            centreDuBurnoutButton.gameObject.SetActive(true);
-            infoBurnoutButton.gameObject.SetActive(true);
         }
         else
         {
             // Cas général pour d'autres messages
             firedGameOverText.gameObject.SetActive(false);
             dieGameOverText.gameObject.SetActive(false);
-            professionalRisksButton.gameObject.SetActive(false);
-            centreDuBurnoutButton.gameObject.SetActive(false);
-            infoBurnoutButton.gameObject.SetActive(false);
         }
 
         // Enregistre ce score dans la liste des meilleurs scores
