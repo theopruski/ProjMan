@@ -118,6 +118,12 @@ public class EndMenuLoader : MonoBehaviour
         SceneManager.LoadScene(mainSceneName);
     }
 
+    // efface les données du tableau de score à la fermeture de l'application
+    void OnApplicationQuit()
+    {
+        ClearHighScores();
+    }
+
     // efface les données du tableau de score
     public void ClearHighScores()
     {
