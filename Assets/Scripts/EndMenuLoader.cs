@@ -30,7 +30,6 @@ public class EndMenuLoader : MonoBehaviour
 
     void Start()
     {
-        /// ClearHighScores(); // efface le score, à surprimer plus tard
 
         // affecte les événements de clic sur les boutons
         restartButton.onClick.AddListener(RestartGame);
@@ -118,12 +117,7 @@ public class EndMenuLoader : MonoBehaviour
         SceneManager.LoadScene(mainSceneName);
     }
 
-    // efface les données du tableau de score à la fermeture de l'application
-    void OnApplicationQuit()
-    {
-        ClearHighScores();
-    }
-
+    /*
     // efface les données du tableau de score
     public void ClearHighScores()
     {
@@ -131,6 +125,7 @@ public class EndMenuLoader : MonoBehaviour
         PlayerPrefs.Save();
         highScores.Clear();
     }
+    */
 
     // affiche les messages et données à la fin de la partie
     public void GameOver(string message, int salary, float totalTimePlayed)
