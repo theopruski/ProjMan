@@ -19,6 +19,16 @@ public class DeliveryManager : MonoBehaviour
 
     [SerializeField] private DirectionalArrows directionalArrow; // Référence au script DirectionalArrows
 
+    [SerializeField] private TMPro.TextMeshProUGUI bossText; // Texte du patron
+    [SerializeField] private float[] warningThresholds; // Les temps de retard
+    [SerializeField] private string[] warningMessages;  // message apres avoir délivrer.
+
+    [SerializeField] private TMPro.TextMeshProUGUI clientText; // Texte du client
+    [SerializeField] private string[] clientMessages; // Les messages du client, de positif à négatif
+    [SerializeField] private float[] clientMessageThresholds; // Les seuils de temps restants (ex : [35, 20, 10])
+
+    private bool[] warningsTriggered; // Pour ne pas répéter les messages. voir si on garde
+
     private GameObject currentDeliveryZone; // Point de livraison actuel
 
     private float minX, maxX, minZ, maxZ; // Limites de la zone valide
@@ -31,30 +41,78 @@ public class DeliveryManager : MonoBehaviour
         CalculateBorders();
         // Générer un point de livraison dès le début
         SpawnNewDeliveryPoint();
+        // initalise le message du patron
+        warningsTriggered = new bool[warningMessages.Length];
     }
 
     void Update()
     {
+        // Récupérer le script PlayerVehicle
+        PlayerVehicle playerVehicle = player.GetComponent<PlayerVehicle>();
+
+
         // Vérifier si le joueur a atteint le point de livraison actuel
         if (currentDeliveryZone != null && Vector3.Distance(player.position, currentDeliveryZone.transform.position) < deliveryRadius)
         {
             // Le joueur a atteint le point de livraison, donc on en place un nouveau
             Destroy(currentDeliveryZone); // Détruire le point actuel
-            // Récupérer le script PlayerVehicle et réinitialiser le timer
-            PlayerVehicle playerVehicle = player.GetComponent<PlayerVehicle>();
+            // réinitialiser le timer
             if (playerVehicle != null)
             {
                 float remainingTime = playerVehicle.timer;
                 int salary = CalculateSalary(remainingTime);
                 playerVehicle.salary += salary;
                 playerVehicle.SetSalaryText();
+                DisplayClientReaction(remainingTime); // message client qui apparait
                 playerVehicle.timer = 45.0f; // remettre le timer à 45 secondes
                 playerVehicle.lateCounted = false; // Réinitialise l'indicateur de retard compté
+                bossText.text = ""; // Nettoyer le texte
+                warningsTriggered = new bool[warningMessages.Length]; // Réinitialiser les avertissements
             }
 
             SpawnNewDeliveryPoint(); // Créer un nouveau point de livraison
         }
+
+        // Affichage des messages menaçants si le joueur est en retard
+        if (playerVehicle != null)
+        {
+            float elapsedTime = 45f - playerVehicle.timer; // Combien de temps s'est écoulé
+            for (int i = 0; i < warningThresholds.Length; i++)
+            {
+                if (elapsedTime > warningThresholds[i] && !warningsTriggered[i])
+                {
+                    bossText.text = warningMessages[i];
+                    warningsTriggered[i] = true;
+                }
+            }
+        }
     }
+
+    private void DisplayClientReaction(float remainingTime)
+    {
+        // Choisir le bon message en fonction du temps restant
+        for (int i = 0; i < clientMessageThresholds.Length; i++)
+        {
+            if (remainingTime >= clientMessageThresholds[i])
+            {
+                clientText.text = clientMessages[i];
+                return;
+            }
+        }
+
+        // message deviens plus négative
+        clientText.text = clientMessages[clientMessages.Length - 1];
+
+        //StartCoroutine(ClearClientMessageAfterSeconds(3f));
+    }
+
+    // efface le message du client quelque seconde plus tard
+    private IEnumerator ClearClientMessageAfterSeconds(float seconds)
+    {
+        yield return new WaitForSeconds(seconds);
+        clientText.text = "";
+    }
+
 
     private void CalculateBorders()
     {
