@@ -117,16 +117,6 @@ public class EndMenuLoader : MonoBehaviour
         SceneManager.LoadScene(mainSceneName);
     }
 
-    /*
-    // efface les données du tableau de score
-    public void ClearHighScores()
-    {
-        PlayerPrefs.DeleteKey("HighScores");
-        PlayerPrefs.Save();
-        highScores.Clear();
-    }
-    */
-
     // affiche les messages et données à la fin de la partie
     public void GameOver(string message, int salary, float totalTimePlayed)
     {

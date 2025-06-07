@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics;
 using UnityEngine;
 
-// suprimme le high score une fois que cela reset
+// supprime le high score une fois que le jeu reset
 public class GameSessionManager : MonoBehaviour
 {
     // verifie si c'est ça ete cleared
@@ -14,7 +14,7 @@ public class GameSessionManager : MonoBehaviour
             // supprime le score
             PlayerPrefs.DeleteKey("HighScores");
             PlayerPrefs.Save();
-            alreadyCleared = true; // Ne le refait plus tant que le jeu reste ouvert
+            alreadyCleared = true;
         }
     }
 }
